@@ -13,6 +13,9 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using Elsa.Activities.UserTask.Extensions;
+using Elsa.Persistence.EntityFramework.Core.Extensions;
+using Elsa.Persistence.EntityFramework.SqlServer;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
@@ -23,23 +26,17 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Identity.Blazor.Server;
-using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Blazor.Server;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Blazor.Server;
 using Volo.Abp.OpenIddict;
-using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
@@ -65,7 +62,13 @@ public class ApprovalDemoBlazorModule : AbpModule
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
-        var configuration = context.Services.GetConfiguration();
+
+        PreConfigure<IMvcBuilder>(mvcBuilder =>
+        {
+            //https://github.com/abpframework/abp/pull/9299
+            mvcBuilder.AddControllersAsServices();
+            mvcBuilder.AddViewComponentsAsServices();
+        });
 
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
@@ -116,8 +119,35 @@ public class ApprovalDemoBlazorModule : AbpModule
         ConfigureSwaggerServices(context.Services);
         ConfigureAutoApiControllers();
         ConfigureBlazorise(context);
-        ConfigureRouter(context);
-        ConfigureMenu(context);
+        ConfigureRouter();
+        ConfigureMenu();
+        ConfigureElsa(context, configuration);
+    }
+
+    private void ConfigureElsa(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        var elsaSection = configuration.GetSection("Elsa");
+        context.Services.AddRazorPages();
+
+        context.Services.AddCors(cors =>
+            cors.AddDefaultPolicy(policy =>
+                policy
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin()
+                    .WithExposedHeaders("Content-Disposition")));
+
+        context.Services
+            // Add services used for the workflows runtime.
+            .AddElsa(elsa => elsa
+                .UseEntityFrameworkPersistence(ef =>
+                    ef.UseSqlServer(configuration.GetConnectionString("Default") ?? string.Empty))
+                .AddConsoleActivities()
+                .AddHttpActivities(elsaSection.GetSection("Server").Bind)
+                .AddEmailActivities(elsaSection.GetSection("Smtp").Bind)
+                .AddUserTaskActivities()
+            )
+            .AddElsaApiEndpoints();
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -136,6 +166,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             options.Applications["MVC"].RootUrl = configuration["App:SelfUrl"];
             options.RedirectAllowedUrls.AddRange(configuration["App:RedirectAllowedUrls"]?.Split(',') ?? Array.Empty<string>());
         });
+
     }
 
     private void ConfigureBundles()
@@ -185,7 +216,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "ApprovalDemo API", Version = "v1" });
-                options.DocInclusionPredicate((docName, description) => true);
+                options.DocInclusionPredicate((_, _) => true);
                 options.CustomSchemaIds(type => type.FullName);
             }
         );
@@ -198,7 +229,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             .AddFontAwesomeIcons();
     }
 
-    private void ConfigureMenu(ServiceConfigurationContext context)
+    private void ConfigureMenu()
     {
         Configure<AbpNavigationOptions>(options =>
         {
@@ -206,7 +237,7 @@ public class ApprovalDemoBlazorModule : AbpModule
         });
     }
 
-    private void ConfigureRouter(ServiceConfigurationContext context)
+    private void ConfigureRouter()
     {
         Configure<AbpRouterOptions>(options =>
         {
@@ -247,7 +278,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
         app.UseCorrelationId();
         app.UseStaticFiles();
         app.UseRouting();
@@ -268,6 +299,11 @@ public class ApprovalDemoBlazorModule : AbpModule
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ApprovalDemo API");
         });
 
-        app.UseConfiguredEndpoints();
+        app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        app.UseHttpActivities();
+        app.UseConfiguredEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }
