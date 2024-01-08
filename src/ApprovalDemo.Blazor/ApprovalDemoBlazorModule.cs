@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ApprovalDemo.ApprovalItems.Workflow;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
@@ -146,6 +147,7 @@ public class ApprovalDemoBlazorModule : AbpModule
                 .AddHttpActivities(elsaSection.GetSection("Server").Bind)
                 .AddEmailActivities(elsaSection.GetSection("Smtp").Bind)
                 .AddUserTaskActivities()
+                .AddActivitiesFrom<SetApprovalItemStatusActivity>()
             )
             .AddElsaApiEndpoints();
     }
