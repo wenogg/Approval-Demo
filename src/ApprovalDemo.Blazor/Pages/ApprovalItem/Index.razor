@@ -46,6 +46,13 @@
                 <DataGridColumn TItem="ApprovalItemDto"
                                 Field="@nameof(ApprovalItemDto.Name)"
                                 Caption="@L["Name"]">
+                    <DisplayTemplate>
+                        <a href="/approval-items/@context.Id">@context.Name</a>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="ApprovalItemDto"
+                                Field="@nameof(ApprovalItemDto.Description)"
+                                Caption="Description">
                 </DataGridColumn>
                 <DataGridColumn TItem="ApprovalItemDto"
                                 Field="@nameof(ApprovalItemDto.Status)"
@@ -78,12 +85,23 @@
                 <Validations @ref="@CreateValidationsRef" Model="@NewEntity" ValidateOnLoad="false">
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["Name"]</FieldLabel>
+                            <FieldLabel>Name</FieldLabel>
                             <TextEdit @bind-Text="@NewEntity.Name">
                                 <Feedback>
                                     <ValidationError/>
                                 </Feedback>
                             </TextEdit>
+                        </Field>
+                    </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <MemoEdit Rows="5" @bind-Text="@EditingEntity.Description">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </MemoEdit>
                         </Field>
                     </Validation>
                 </Validations>
@@ -109,7 +127,7 @@
                 <CloseButton Clicked="CloseEditModalAsync"/>
             </ModalHeader>
             <ModalBody>
-                <Validations @ref="@EditValidationsRef" Model="@NewEntity" ValidateOnLoad="false">
+                <Validations @ref="@EditValidationsRef" Model="@EditingEntity" ValidateOnLoad="false">
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Name"]</FieldLabel>
@@ -118,6 +136,16 @@
                                     <ValidationError/>
                                 </Feedback>
                             </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <MemoEdit Rows="5" @bind-Text="@EditingEntity.Description">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </MemoEdit>
                         </Field>
                     </Validation>
                 </Validations>

@@ -1,0 +1,26 @@
+﻿@page "/approval-items/{ApprovalItemId}"
+@inherits ApprovalDemoComponentBase
+
+<PageHeader Title="Approval Item Details" />
+
+<Card>
+    <CardHeader>
+        <h2>Approval Item Details</h2>
+    </CardHeader>
+    <CardBody>
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is12">
+                <FieldLabel>Name</FieldLabel>
+                <div>@ApprovalItem.Name</div>
+            </Field>
+            <Field ColumnSize="ColumnSize.Is12">
+                <FieldLabel>Description</FieldLabel>
+                <div>@ApprovalItem.Description</div>
+            </Field>
+            <Field ColumnSize="ColumnSize.Is12">
+                <FieldLabel>Status</FieldLabel>
+                <div>@ApprovalItem.Status</div>
+            </Field>
+        </Fields>
+    </CardBody>
+</Card>

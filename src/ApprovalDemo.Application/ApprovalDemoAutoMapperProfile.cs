@@ -10,6 +10,7 @@ public class ApprovalDemoAutoMapperProfile : Profile
         CreateMap<ApprovalItem, ApprovalItemDto>()
             .ReverseMap();
 
+        CreateMap<ApprovalItemDto, UpdateApprovalItemDto>();
         CreateMap<UpdateApprovalItemDto, ApprovalItem>();
     }
 }
