@@ -16,4 +16,20 @@ public class ApprovalItemAppService(IRepository<ApprovalItem, int> repository, I
         await approvalItemManager.StartWorkflow(shipmentDto.Id);
         return shipmentDto;
     }
+
+    public Task ApplyTransition(int id, string transition)
+    {
+        return approvalItemManager.ApplyTransition(id, transition);
+    }
+
+    public override async Task<ApprovalItemDto> GetAsync(int id)
+    {
+        await CheckGetPolicyAsync();
+
+        var entity = await GetEntityByIdAsync(id);
+
+        var item = await MapToGetOutputDtoAsync(entity);
+        item.Actions = await approvalItemManager.GetAvailableActions(id);
+        return item;
+    }
 }

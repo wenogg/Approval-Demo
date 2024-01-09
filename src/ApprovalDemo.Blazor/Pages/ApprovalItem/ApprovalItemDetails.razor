@@ -1,8 +1,7 @@
 ﻿@page "/approval-items/{ApprovalItemId}"
 @inherits ApprovalDemoComponentBase
 
-<PageHeader Title="Approval Item Details" />
-
+<PageProgress Visible="Loading" Color="Color.Info" />
 <Card>
     <CardHeader>
         <h2>Approval Item Details</h2>
@@ -23,4 +22,10 @@
             </Field>
         </Fields>
     </CardBody>
+    <CardFooter>
+        @foreach (var action in ApprovalItem.Actions)
+        {
+            <Button Color="Color.Primary" Margin="Margin.Is1.FromEnd" Clicked="@(() => SendUserAction(action))">@action</Button>
+        }
+    </CardFooter>
 </Card>
