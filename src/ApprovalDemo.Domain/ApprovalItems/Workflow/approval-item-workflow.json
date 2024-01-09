@@ -1,11 +1,11 @@
 {
   "$id": "1",
   "definitionId": "a8a7095eb44144c7b0d5031b4ab4fdd7",
-  "versionId": "ba067a735c7e4461aef1ae3e94e6d3d7",
+  "versionId": "c3ab1d4eef1440bbab9b2c71689fd390",
   "name": "ApprovalItemWorkflow",
   "displayName": "Approval Item Workflow",
   "description": "ApprovalItemWorkflow",
-  "version": 3,
+  "version": 5,
   "variables": {
     "$id": "2",
     "data": {}
@@ -20,7 +20,7 @@
   "isPublished": true,
   "isLatest": true,
   "tag": "ApprovalItem",
-  "createdAt": "2024-01-08T01:52:44.8779868Z",
+  "createdAt": "2024-01-08T18:00:51.1035181Z",
   "activities": [
     {
       "$id": "4",
@@ -211,51 +211,86 @@
       "propertyStorageProviders": {
         "$id": "37"
       }
+    },
+    {
+      "$id": "38",
+      "activityId": "f634436b-b7f6-410a-bc76-be8cef55e69d",
+      "type": "WriteLine",
+      "displayName": "Start workflow output",
+      "persistWorkflow": false,
+      "loadWorkflowContext": false,
+      "saveWorkflowContext": false,
+      "properties": [
+        {
+          "$id": "39",
+          "name": "Text",
+          "syntax": "Liquid",
+          "expressions": {
+            "$id": "40",
+            "Liquid": "Starting approval item workflow!"
+          }
+        }
+      ],
+      "propertyStorageProviders": {
+        "$id": "41"
+      }
     }
   ],
   "connections": [
     {
-      "$id": "38",
+      "$id": "42",
       "sourceActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
       "targetActivityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
       "outcome": "Send for Approval"
     },
     {
-      "$id": "39",
+      "$id": "43",
       "sourceActivityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
       "targetActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "outcome": "Done"
     },
     {
-      "$id": "40",
+      "$id": "44",
       "sourceActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
       "targetActivityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "outcome": "Cancel Item"
     },
     {
-      "$id": "41",
+      "$id": "45",
       "sourceActivityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "targetActivityId": "a6cfa177-0448-48ac-a6d4-da7e232fd612",
       "outcome": "Done"
     },
     {
-      "$id": "42",
+      "$id": "46",
       "sourceActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "targetActivityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "outcome": "Canel Item"
     },
     {
-      "$id": "43",
+      "$id": "47",
       "sourceActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "targetActivityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
       "outcome": "Approve"
     },
     {
-      "$id": "44",
+      "$id": "48",
       "sourceActivityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
       "targetActivityId": "28d504c0-3b7a-49e4-979f-7b9072a0e26a",
       "outcome": "Done"
+    },
+    {
+      "$id": "49",
+      "sourceActivityId": "f634436b-b7f6-410a-bc76-be8cef55e69d",
+      "targetActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
+      "outcome": "Done"
+    },
+    {
+      "$id": "50",
+      "sourceActivityId": "a6cfa177-0448-48ac-a6d4-da7e232fd612",
+      "targetActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
+      "outcome": "Done"
     }
   ],
-  "id": "ba067a735c7e4461aef1ae3e94e6d3d7"
+  "id": "c3ab1d4eef1440bbab9b2c71689fd390"
 }

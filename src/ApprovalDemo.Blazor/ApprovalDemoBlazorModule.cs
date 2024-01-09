@@ -17,7 +17,9 @@ using ApprovalDemo.MultiTenancy;
 using Elsa.Activities.UserTask.Extensions;
 using Elsa.Persistence.EntityFramework.Core.Extensions;
 using Elsa.Persistence.EntityFramework.SqlServer;
+using Elsa.Providers.Workflows;
 using OpenIddict.Validation.AspNetCore;
+using Storage.Net;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme;
@@ -150,6 +152,13 @@ public class ApprovalDemoBlazorModule : AbpModule
                 .AddActivitiesFrom<SetApprovalItemStatusActivity>()
             )
             .AddElsaApiEndpoints();
+
+        // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
+        var currentAssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
+
+        context.Services.Configure<BlobStorageWorkflowProviderOptions>(options =>
+            options.BlobStorageFactory = () =>
+                StorageFactory.Blobs.DirectoryFiles(Path.Combine(currentAssemblyPath, "ApprovalItems", "Workflow")));
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
