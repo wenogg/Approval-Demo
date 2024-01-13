@@ -1,4 +1,8 @@
 ﻿using System;
+using Elsa.Persistence.EntityFramework.Core;
+using Elsa.Persistence.EntityFramework.SqlServer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Uow;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -43,6 +47,8 @@ public class ApprovalDemoEntityFrameworkCoreModule : AbpModule
             options.AddDefaultRepositories(includeAllEntities: true);
         });
 
+        ConfigureElsaMigrationContext(context);
+
         Configure<AbpDbContextOptions>(options =>
         {
                 /* The main point to change your DBMS.
@@ -50,5 +56,25 @@ public class ApprovalDemoEntityFrameworkCoreModule : AbpModule
             options.UseSqlServer();
         });
 
+    }
+
+    /// <summary>
+    /// Configures the Elsa for the DbMigrator to use while running miggrations.
+    /// </summary>
+    /// <param name="context"></param>
+    private static void ConfigureElsaMigrationContext(ServiceConfigurationContext context)
+    {
+        var configuration = context.Services.GetSingletonInstance<IConfiguration>();
+        var migrationsAssemblyMarker = typeof(SqlServerElsaContextFactory);
+        var connectionString = configuration.GetConnectionString("Default");
+
+        context.Services.AddDbContext<ElsaContext>(options =>
+        {
+           options
+                .UseSqlServer(connectionString: connectionString,
+                    sqlOptions => sqlOptions
+                        .MigrationsAssembly(migrationsAssemblyMarker.Assembly.GetName().Name)
+                        .MigrationsHistoryTable(ElsaContext.MigrationsHistoryTable, ElsaContext.ElsaSchema));
+        });
     }
 }

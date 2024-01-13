@@ -144,7 +144,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             // Add services used for the workflows runtime.
             .AddElsa(elsa => elsa
                 .UseEntityFrameworkPersistence(ef =>
-                    ef.UseSqlServer(configuration.GetConnectionString("Default") ?? string.Empty))
+                    ef.UseSqlServer(configuration.GetConnectionString("Default") ?? string.Empty), autoRunMigrations: false)
                 .AddConsoleActivities()
                 .AddHttpActivities(elsaSection.GetSection("Server").Bind)
                 .AddEmailActivities(elsaSection.GetSection("Smtp").Bind)

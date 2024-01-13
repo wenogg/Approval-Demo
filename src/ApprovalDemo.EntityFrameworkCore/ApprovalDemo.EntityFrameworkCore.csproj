@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApprovalDemo.Domain\ApprovalDemo.Domain.csproj" />
+    <PackageReference Include="Elsa.Persistence.EntityFramework.Core" Version="2.13.0" />
+    <PackageReference Include="Elsa.Persistence.EntityFramework.SqlServer" Version="2.13.0" />
     <PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" Version="8.0.0" />
