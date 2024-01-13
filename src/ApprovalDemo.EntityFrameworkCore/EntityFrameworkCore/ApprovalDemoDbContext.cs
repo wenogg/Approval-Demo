@@ -1,4 +1,5 @@
 ﻿using ApprovalDemo.ApprovalItems;
+using ApprovalDemo.Orders;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -53,6 +54,7 @@ public class ApprovalDemoDbContext :
 
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<ApprovalItem> ApprovalItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
     public ApprovalDemoDbContext(DbContextOptions<ApprovalDemoDbContext> options)
         : base(options)
@@ -80,6 +82,14 @@ public class ApprovalDemoDbContext :
             b.ToTable(ApprovalDemoConsts.DbTablePrefix + "ApprovalItems", ApprovalDemoConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<Order>(b =>
+        {
+            b.ToTable(ApprovalDemoConsts.DbTablePrefix + "Orders", ApprovalDemoConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Item).IsRequired().HasMaxLength(200);
+            b.Property(x => x.Price).HasPrecision(18, 4);
         });
     }
 }
