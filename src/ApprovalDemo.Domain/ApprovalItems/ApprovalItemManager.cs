@@ -5,6 +5,8 @@ using Elsa;
 using Elsa.Activities.UserTask.Contracts;
 using Elsa.Models;
 using Elsa.Persistence;
+using Elsa.Persistence.Specifications;
+using Elsa.Persistence.Specifications.WorkflowExecutionLogRecords;
 using Elsa.Services;
 using Elsa.Services.WorkflowStorage;
 using Volo.Abp;
@@ -22,6 +24,8 @@ public interface IApprovalItemManager : IDomainService
     Task<List<string>> GetAvailableActions(int id);
 
     public Task ApplyTransition(int id, string transition);
+
+    Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id);
 }
 
 public class ApprovalItemManager(
@@ -31,7 +35,8 @@ public class ApprovalItemManager(
     IWorkflowInstanceStore workflowInstanceStore,
     IUserTaskService userTaskService,
     IWorkflowStorageService workflowStorageService,
-    IWorkflowTriggerInterruptor workflowTriggerInterruptor)
+    IWorkflowTriggerInterruptor workflowTriggerInterruptor,
+    IWorkflowExecutionLogStore workflowExecutionLogStore)
     : DomainService, IApprovalItemManager
 {
     private const string WorkflowBlueprintTag = "ApprovalItem";
@@ -109,8 +114,25 @@ public class ApprovalItemManager(
         {
             return;
         }
-
         await workflowStorageService.UpdateInputAsync(workflowInstance!, new WorkflowInput(transition));
         await workflowTriggerInterruptor.InterruptActivityAsync(workflowInstance!, currentActivity.ActivityId);
+    }
+
+    /// <summary>
+    /// Returns the workflow journal entries for the ApprovalItem
+    /// </summary>
+    public async Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id)
+    {
+        var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
+        if (workflowInstance == null)
+        {
+            return [];
+        }
+
+        var specification = new WorkflowInstanceIdSpecification(workflowInstance.Id);
+        var totalCount = await workflowExecutionLogStore.CountAsync(specification);
+        var orderBy = OrderBySpecification.OrderBy<WorkflowExecutionLogRecord>(x => x.Timestamp);
+        var records = (await workflowExecutionLogStore.FindManyAsync(specification, orderBy)).ToList();
+        return records;
     }
 }

@@ -1,11 +1,11 @@
 {
   "$id": "1",
   "definitionId": "a8a7095eb44144c7b0d5031b4ab4fdd7",
-  "versionId": "28910ba0bbae4ab2967e25995d2f0f89",
+  "versionId": "3275d5e36375467f85705fafb8102691",
   "name": "ApprovalItemWorkflow",
   "displayName": "Approval Item Workflow",
   "description": "ApprovalItemWorkflow",
-  "version": 6,
+  "version": 2,
   "variables": {
     "$id": "2",
     "data": {}
@@ -25,7 +25,7 @@
   "isPublished": true,
   "isLatest": true,
   "tag": "ApprovalItem",
-  "createdAt": "2024-01-13T15:05:42.1130913Z",
+  "createdAt": "2024-01-13T15:46:56.4225207Z",
   "activities": [
     {
       "$id": "5",
@@ -309,28 +309,22 @@
     },
     {
       "$id": "54",
-      "sourceActivityId": "a6cfa177-0448-48ac-a6d4-da7e232fd612",
-      "targetActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
-      "outcome": "Done"
-    },
-    {
-      "$id": "55",
       "sourceActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
       "targetActivityId": "f6996bb5-b910-4b8a-9208-beebec238100",
       "outcome": "Send for Approval"
     },
     {
-      "$id": "56",
+      "$id": "55",
       "sourceActivityId": "f6996bb5-b910-4b8a-9208-beebec238100",
       "targetActivityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
       "outcome": "False"
     },
     {
-      "$id": "57",
+      "$id": "56",
       "sourceActivityId": "f6996bb5-b910-4b8a-9208-beebec238100",
       "targetActivityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
       "outcome": "True"
     }
   ],
-  "id": "28910ba0bbae4ab2967e25995d2f0f89"
+  "id": "3275d5e36375467f85705fafb8102691"
 }

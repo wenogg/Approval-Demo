@@ -1,4 +1,5 @@
 ﻿@page "/approval-items/{ApprovalItemId}"
+@using ApprovalDemo.ApprovalItems
 @inherits ApprovalDemoComponentBase
 
 <PageProgress Visible="Loading" Color="Color.Info" />
@@ -7,24 +8,50 @@
         <h2>Approval Item Details</h2>
     </CardHeader>
     <CardBody>
-        <Fields>
-            <Field ColumnSize="ColumnSize.Is12">
-                <FieldLabel>Name</FieldLabel>
-                <div>@ApprovalItem.Name</div>
-            </Field>
-            <Field ColumnSize="ColumnSize.Is12">
-                <FieldLabel>Is Hot</FieldLabel>
-                <div>@(ApprovalItem.IsHot ? "Yes" : "No")</div>
-            </Field>
-            <Field ColumnSize="ColumnSize.Is12">
-                <FieldLabel>Description</FieldLabel>
-                <div>@ApprovalItem.Description</div>
-            </Field>
-            <Field ColumnSize="ColumnSize.Is12">
-                <FieldLabel>Status</FieldLabel>
-                <div>@ApprovalItem.Status</div>
-            </Field>
-        </Fields>
+        <Tabs RenderMode="TabsRenderMode.LazyLoad" SelectedTab="Details">
+            <Items>
+                <Tab Name="Details">Details</Tab>
+                <Tab Name="Journal">Journal</Tab>
+            </Items>
+            <Content>
+                <TabPanel Name="Details">
+                    <Fields>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Name</FieldLabel>
+                            <div>@ApprovalItem.Name</div>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Is Hot</FieldLabel>
+                            <div>@(ApprovalItem.IsHot ? "Yes" : "No")</div>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Description</FieldLabel>
+                            <div>@ApprovalItem.Description</div>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Status</FieldLabel>
+                            <div>@ApprovalItem.Status</div>
+                        </Field>
+                    </Fields>
+                </TabPanel>
+                <TabPanel Name="Journal">
+                    <DataGrid TItem="JournalEntryDto"
+                              Data="ApprovalItem.Journal"
+                              PageSize="@int.MaxValue">
+                        <DataGridColumns>
+                            <DataGridColumn TItem="JournalEntryDto"
+                                            Field="@nameof(JournalEntryDto.TimeStamp)"
+                                            Caption="TimeStamp">
+                            </DataGridColumn>
+                            <DataGridColumn TItem="JournalEntryDto"
+                                            Field="@nameof(JournalEntryDto.Message)"
+                                            Caption="Message">
+                            </DataGridColumn>
+                        </DataGridColumns>
+                    </DataGrid>
+                </TabPanel>
+            </Content>
+        </Tabs>
     </CardBody>
     <CardFooter>
         @foreach (var action in ApprovalItem.Actions)
