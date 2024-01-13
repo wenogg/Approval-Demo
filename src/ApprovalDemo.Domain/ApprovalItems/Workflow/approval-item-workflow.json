@@ -1,11 +1,11 @@
 {
   "$id": "1",
   "definitionId": "a8a7095eb44144c7b0d5031b4ab4fdd7",
-  "versionId": "c3ab1d4eef1440bbab9b2c71689fd390",
+  "versionId": "28910ba0bbae4ab2967e25995d2f0f89",
   "name": "ApprovalItemWorkflow",
   "displayName": "Approval Item Workflow",
   "description": "ApprovalItemWorkflow",
-  "version": 5,
+  "version": 6,
   "variables": {
     "$id": "2",
     "data": {}
@@ -14,16 +14,21 @@
     "$id": "3",
     "data": {}
   },
+  "contextOptions": {
+    "$id": "4",
+    "contextType": "ApprovalDemo.ApprovalItems.ApprovalItem, ApprovalDemo.Domain",
+    "contextFidelity": "Burst"
+  },
   "isSingleton": false,
   "persistenceBehavior": "WorkflowBurst",
   "deleteCompletedInstances": false,
   "isPublished": true,
   "isLatest": true,
   "tag": "ApprovalItem",
-  "createdAt": "2024-01-08T18:00:51.1035181Z",
+  "createdAt": "2024-01-13T15:05:42.1130913Z",
   "activities": [
     {
-      "$id": "4",
+      "$id": "5",
       "activityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
       "type": "UserTask",
       "name": "PendingApproval",
@@ -33,20 +38,20 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "5",
+          "$id": "6",
           "name": "Actions",
           "expressions": {
-            "$id": "6",
+            "$id": "7",
             "Json": "[\"Send for Approval\",\"Cancel Item\"]"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "7"
+        "$id": "8"
       }
     },
     {
-      "$id": "8",
+      "$id": "9",
       "activityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
       "type": "SetApprovalItemStatusActivity",
       "displayName": "Set item to Pending Approval",
@@ -55,29 +60,29 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "9",
+          "$id": "10",
           "name": "ApprovalItemId",
           "syntax": "JavaScript",
           "expressions": {
-            "$id": "10",
+            "$id": "11",
             "JavaScript": "correlationId"
           }
         },
         {
-          "$id": "11",
+          "$id": "12",
           "name": "Status",
           "expressions": {
-            "$id": "12",
+            "$id": "13",
             "Literal": "PendingApproval"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "13"
+        "$id": "14"
       }
     },
     {
-      "$id": "14",
+      "$id": "15",
       "activityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "type": "UserTask",
       "name": "PendingApproval",
@@ -87,20 +92,20 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "15",
+          "$id": "16",
           "name": "Actions",
           "expressions": {
-            "$id": "16",
+            "$id": "17",
             "Json": "[\"Approve\",\"Canel Item\"]"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "17"
+        "$id": "18"
       }
     },
     {
-      "$id": "18",
+      "$id": "19",
       "activityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "type": "SetApprovalItemStatusActivity",
       "name": "SetItemCancelled",
@@ -110,29 +115,29 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "19",
+          "$id": "20",
           "name": "ApprovalItemId",
           "syntax": "JavaScript",
           "expressions": {
-            "$id": "20",
+            "$id": "21",
             "JavaScript": "correlationId"
           }
         },
         {
-          "$id": "21",
+          "$id": "22",
           "name": "Status",
           "expressions": {
-            "$id": "22",
+            "$id": "23",
             "Literal": "Cancelled"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "23"
+        "$id": "24"
       }
     },
     {
-      "$id": "24",
+      "$id": "25",
       "activityId": "a6cfa177-0448-48ac-a6d4-da7e232fd612",
       "type": "WriteLine",
       "displayName": "Item Cancelled Output",
@@ -141,22 +146,22 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "25",
+          "$id": "26",
           "name": "Text",
           "syntax": "Liquid",
           "expressions": {
-            "$id": "26",
+            "$id": "27",
             "Liquid": "Approval Item '{{ Input.Item.Name }} ({{ Input.Item.Id }})' Cancelled",
             "JavaScript": ""
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "27"
+        "$id": "28"
       }
     },
     {
-      "$id": "28",
+      "$id": "29",
       "activityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
       "type": "SetApprovalItemStatusActivity",
       "name": "SetItemApproved",
@@ -166,29 +171,29 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "29",
+          "$id": "30",
           "name": "ApprovalItemId",
           "syntax": "JavaScript",
           "expressions": {
-            "$id": "30",
+            "$id": "31",
             "JavaScript": "correlationId"
           }
         },
         {
-          "$id": "31",
+          "$id": "32",
           "name": "Status",
           "expressions": {
-            "$id": "32",
+            "$id": "33",
             "Literal": "Approved"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "33"
+        "$id": "34"
       }
     },
     {
-      "$id": "34",
+      "$id": "35",
       "activityId": "28d504c0-3b7a-49e4-979f-7b9072a0e26a",
       "type": "WriteLine",
       "name": "ItemApprovedOutput",
@@ -198,22 +203,22 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "35",
+          "$id": "36",
           "name": "Text",
           "syntax": "Liquid",
           "expressions": {
-            "$id": "36",
+            "$id": "37",
             "Literal": "",
             "Liquid": "Approval Item '{{ Input.Item.Name }} ({{ Input.Item.Id }})' was approved"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "37"
+        "$id": "38"
       }
     },
     {
-      "$id": "38",
+      "$id": "39",
       "activityId": "f634436b-b7f6-410a-bc76-be8cef55e69d",
       "type": "WriteLine",
       "displayName": "Start workflow output",
@@ -222,75 +227,110 @@
       "saveWorkflowContext": false,
       "properties": [
         {
-          "$id": "39",
+          "$id": "40",
           "name": "Text",
           "syntax": "Liquid",
           "expressions": {
-            "$id": "40",
-            "Liquid": "Starting approval item workflow!"
+            "$id": "41",
+            "Liquid": "Starting approval item workflow"
           }
         }
       ],
       "propertyStorageProviders": {
-        "$id": "41"
+        "$id": "42"
+      }
+    },
+    {
+      "$id": "43",
+      "activityId": "f6996bb5-b910-4b8a-9208-beebec238100",
+      "type": "If",
+      "displayName": "If/Else",
+      "persistWorkflow": false,
+      "loadWorkflowContext": true,
+      "saveWorkflowContext": false,
+      "properties": [
+        {
+          "$id": "44",
+          "name": "Condition",
+          "syntax": "JavaScript",
+          "expressions": {
+            "$id": "45",
+            "JavaScript": "workflowContext.IsHot"
+          }
+        }
+      ],
+      "propertyStorageProviders": {
+        "$id": "46"
       }
     }
   ],
   "connections": [
     {
-      "$id": "42",
-      "sourceActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
-      "targetActivityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
-      "outcome": "Send for Approval"
-    },
-    {
-      "$id": "43",
+      "$id": "47",
       "sourceActivityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
       "targetActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "outcome": "Done"
     },
     {
-      "$id": "44",
+      "$id": "48",
       "sourceActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
       "targetActivityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "outcome": "Cancel Item"
     },
     {
-      "$id": "45",
+      "$id": "49",
       "sourceActivityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "targetActivityId": "a6cfa177-0448-48ac-a6d4-da7e232fd612",
       "outcome": "Done"
     },
     {
-      "$id": "46",
+      "$id": "50",
       "sourceActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "targetActivityId": "d8968a90-2dc8-47f5-bbc5-b2a00464850a",
       "outcome": "Canel Item"
     },
     {
-      "$id": "47",
+      "$id": "51",
       "sourceActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "targetActivityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
       "outcome": "Approve"
     },
     {
-      "$id": "48",
+      "$id": "52",
       "sourceActivityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
       "targetActivityId": "28d504c0-3b7a-49e4-979f-7b9072a0e26a",
       "outcome": "Done"
     },
     {
-      "$id": "49",
+      "$id": "53",
       "sourceActivityId": "f634436b-b7f6-410a-bc76-be8cef55e69d",
       "targetActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
       "outcome": "Done"
     },
     {
-      "$id": "50",
+      "$id": "54",
       "sourceActivityId": "a6cfa177-0448-48ac-a6d4-da7e232fd612",
       "targetActivityId": "3e17bb9b-3eca-488b-9c86-6f85fb797b77",
       "outcome": "Done"
+    },
+    {
+      "$id": "55",
+      "sourceActivityId": "0135861a-d074-41ce-bec4-b8fb68484b81",
+      "targetActivityId": "f6996bb5-b910-4b8a-9208-beebec238100",
+      "outcome": "Send for Approval"
+    },
+    {
+      "$id": "56",
+      "sourceActivityId": "f6996bb5-b910-4b8a-9208-beebec238100",
+      "targetActivityId": "e369802a-f110-44d1-8e09-590fcf68bc8c",
+      "outcome": "False"
+    },
+    {
+      "$id": "57",
+      "sourceActivityId": "f6996bb5-b910-4b8a-9208-beebec238100",
+      "targetActivityId": "ac1b073f-759d-44fd-9946-8fb957fe1c50",
+      "outcome": "True"
     }
   ],
-  "id": "c3ab1d4eef1440bbab9b2c71689fd390"
+  "id": "28910ba0bbae4ab2967e25995d2f0f89"
 }

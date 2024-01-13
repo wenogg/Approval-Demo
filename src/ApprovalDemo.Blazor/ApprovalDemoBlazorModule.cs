@@ -151,6 +151,7 @@ public class ApprovalDemoBlazorModule : AbpModule
                 .AddUserTaskActivities()
                 .AddActivitiesFrom<SetApprovalItemStatusActivity>()
             )
+            .AddWorkflowContextProvider<ApprovalItemWorkflowContextProvider>()
             .AddElsaApiEndpoints();
 
         // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
