@@ -10,7 +10,7 @@ using Volo.Abp.Domain.Repositories;
 namespace ApprovalDemo.ApprovalItems.Workflow;
 
 [Activity(Category = "Approval Items", Description = "Changes the status of the document.")]
-public class SetApprovalItemStatusActivity(IApprovalItemManager approvalItemManager, IRepository<ApprovalItem, int> approvalItemRepsoitory) : Activity
+public class SetApprovalItemStatusActivity(IApprovalItemManager approvalItemManager, IRepository<ApprovalItem, int> approvalItemRepository) : Activity
 {
     [ActivityInput(
         Label = "Approval Item ID",
@@ -42,7 +42,7 @@ public class SetApprovalItemStatusActivity(IApprovalItemManager approvalItemMana
         var id = int.Parse(ApprovalItemId);
         await approvalItemManager.SetStatus(id, Status);
 
-        Item = (await approvalItemRepsoitory.FindAsync(id))!;
+        Item = (await approvalItemRepository.FindAsync(id))!;
         NewStatus = Item.Status;
         return Done();
     }

@@ -12,4 +12,6 @@ public class ApprovalItem : FullAuditedAggregateRoot<int>
     public required string Description { get; set; }
 
     public ApprovalStatusType Status { get; set; } = ApprovalStatusType.New;
+
+    public bool IsHot { get; set; }
 }

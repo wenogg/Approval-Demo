@@ -10,4 +10,6 @@ public class UpdateApprovalItemDto
 
     [Required]
     public string Description { get; set; }
+
+    public bool IsHot { get; set; }
 }

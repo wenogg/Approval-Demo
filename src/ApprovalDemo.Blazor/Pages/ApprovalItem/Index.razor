@@ -53,6 +53,13 @@
                 <DataGridColumn TItem="ApprovalItemDto"
                                 Field="@nameof(ApprovalItemDto.Description)"
                                 Caption="Description">
+                    <DisplayTemplate>
+                        @(context.IsHot ? "Yes" : "No")
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="ApprovalItemDto"
+                                Field="@nameof(ApprovalItemDto.Description)"
+                                Caption="Description">
                 </DataGridColumn>
                 <DataGridColumn TItem="ApprovalItemDto"
                                 Field="@nameof(ApprovalItemDto.Status)"
@@ -104,6 +111,14 @@
                             </MemoEdit>
                         </Field>
                     </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Is Hot</FieldLabel>
+                            <Switch TValue="bool" @bind-Checked="NewEntity.IsHot" />
+                        </Field>
+                    </Validation>
+
                 </Validations>
             </ModalBody>
             <ModalFooter>
@@ -146,6 +161,12 @@
                                     <ValidationError/>
                                 </Feedback>
                             </MemoEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Is Hot</FieldLabel>
+                            <Switch TValue="bool" @bind-Checked="EditingEntity.IsHot" />
                         </Field>
                     </Validation>
                 </Validations>

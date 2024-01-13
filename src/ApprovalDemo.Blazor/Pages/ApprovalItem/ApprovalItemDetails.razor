@@ -13,6 +13,10 @@
                 <div>@ApprovalItem.Name</div>
             </Field>
             <Field ColumnSize="ColumnSize.Is12">
+                <FieldLabel>Is Hot</FieldLabel>
+                <div>@(ApprovalItem.IsHot ? "Yes" : "No")</div>
+            </Field>
+            <Field ColumnSize="ColumnSize.Is12">
                 <FieldLabel>Description</FieldLabel>
                 <div>@ApprovalItem.Description</div>
             </Field>

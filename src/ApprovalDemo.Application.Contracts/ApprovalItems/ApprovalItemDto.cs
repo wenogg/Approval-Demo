@@ -9,6 +9,8 @@ public class ApprovalItemDto : AuditedEntityDto<int>
 
     public string Description { get; set; }
 
+    public bool IsHot { get; set; }
+
     public ApprovalStatusType Status { get; set; }
 
     public List<string> Actions { get; set; } = [];
