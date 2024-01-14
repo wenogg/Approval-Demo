@@ -31,6 +31,9 @@
     <None Update="ApprovalItems\Workflow\approval-item-workflow.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Orders\Workflow\order-workflow.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

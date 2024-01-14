@@ -6,5 +6,7 @@ public enum OrderStatusType
     Preparing = 2,
     ReturnedForCorrection = 3,
     Shipping = 4,
-    Delivered = 5,
+    Shipped = 5,
+    Delivered = 6,
+    Cancelled = 7,
 }

@@ -23,4 +23,13 @@ public partial class OrderDetails
         Order = await OrderAppService.GetAsync(itemId);
         Loading = false;
     }
+
+    private async Task SendUserAction(string action)
+    {
+        Loading = true;
+        var itemId = int.Parse(OrderId);
+        await OrderAppService.ApplyTransition(itemId, action, CurrentUser.UserName!);
+        Order = await OrderAppService.GetAsync(itemId);
+        Loading = false;
+    }
 }

@@ -14,25 +14,23 @@ using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 
-namespace ApprovalDemo.ApprovalItems;
+namespace ApprovalDemo.Orders;
 
-public interface IApprovalItemManager : IDomainService
+public interface IOrderManager : IDomainService
 {
-    Task SetStatus(int id, ApprovalStatusType status);
+    Task SetStatus(int id, OrderStatusType status);
 
     Task StartWorkflow(int id);
 
     Task<List<string>> GetAvailableActions(int id);
-
-    public Task ApplyTransition(int id, string action);
 
     public Task ApplyTransition(int id, string action, string userName);
 
     Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id);
 }
 
-public class ApprovalItemManager(
-    IRepository<ApprovalItem, int> approvalItemRepository,
+public class OrderManager(
+    IRepository<Order, int> orderRepository,
     IWorkflowRegistry workflowRegistry,
     IWorkflowDefinitionDispatcher workflowDispatcher,
     IWorkflowInstanceStore workflowInstanceStore,
@@ -40,32 +38,31 @@ public class ApprovalItemManager(
     IWorkflowStorageService workflowStorageService,
     IWorkflowTriggerInterruptor workflowTriggerInterruptor,
     IWorkflowExecutionLogStore workflowExecutionLogStore)
-    : DomainService, IApprovalItemManager
+    : DomainService, IOrderManager
 {
-    private const string WorkflowBlueprintTag = "ApprovalItem";
-
+    private const string WorkflowBlueprintTag = "Order";
 
     /// <summary>
-    /// Updates the status of the ApprovalItem
+    /// Updates the status of the Order
     /// </summary>
-    public async Task SetStatus(int id, ApprovalStatusType status)
+    public async Task SetStatus(int id, OrderStatusType status)
     {
-        var item = await approvalItemRepository.FindAsync(id);
+        var item = await orderRepository.FindAsync(id);
         if (item == null)
         {
             throw new UserFriendlyException($"Could not find approval item with id {id}");
         }
 
         item.Status = status;
-        await approvalItemRepository.UpdateAsync(item);
+        await orderRepository.UpdateAsync(item);
     }
 
     /// <summary>
-    /// Initiates a workflow for the ApprovalItem
+    /// Initiates a workflow for the Order
     /// </summary>
     public async Task StartWorkflow(int id)
     {
-        var item = await approvalItemRepository.FindAsync(id);
+        var item = await orderRepository.FindAsync(id);
         if (item == null)
         {
             throw new UserFriendlyException($"Could not find approval item with id {id}");
@@ -87,7 +84,7 @@ public class ApprovalItemManager(
     }
 
     /// <summary>
-    /// Returns the available actions for the ApprovalItem
+    /// Returns the available actions for the Order
     /// </summary>
     public async Task<List<string>> GetAvailableActions(int id)
     {
@@ -108,20 +105,8 @@ public class ApprovalItemManager(
     }
 
     /// <summary>
-    /// Applies a transition to the ApprovalItem
+    /// Applies a transition to the Order
     /// </summary>
-    public async Task ApplyTransition(int id, string action)
-    {
-        var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
-        var currentActivity = workflowInstance?.BlockingActivities.FirstOrDefault();
-        if (currentActivity == null)
-        {
-            return;
-        }
-        await workflowStorageService.UpdateInputAsync(workflowInstance!, new WorkflowInput(action));
-        await workflowTriggerInterruptor.InterruptActivityAsync(workflowInstance!, currentActivity.ActivityId);
-    }
-
     public async Task ApplyTransition(int id, string action, string userName)
     {
         var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
@@ -136,7 +121,7 @@ public class ApprovalItemManager(
     }
 
     /// <summary>
-    /// Returns the workflow journal entries for the ApprovalItem
+    /// Returns the workflow journal entries for the Order
     /// </summary>
     public async Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id)
     {
@@ -147,7 +132,6 @@ public class ApprovalItemManager(
         }
 
         var specification = new WorkflowInstanceIdSpecification(workflowInstance.Id);
-        var totalCount = await workflowExecutionLogStore.CountAsync(specification);
         var orderBy = OrderBySpecification.OrderBy<WorkflowExecutionLogRecord>(x => x.Timestamp);
         var records = (await workflowExecutionLogStore.FindManyAsync(specification, orderBy)).ToList();
         return records;

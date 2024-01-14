@@ -11,7 +11,11 @@ using Elsa.Services.Models;
 namespace ApprovalDemo.Workflow.Activities;
 
 
-[Activity(Category = "User Tasks", Description = "Triggered when an Authorized user action is received")]
+[Trigger(
+    Category = "User Tasks",
+    Description = "Triggers when a user action is received.",
+    Outcomes = new string[0]
+)]
 public class AuthorizedUserTask(IContentSerializer serializer) : UserTask(serializer)
 {
     [ActivityInput(

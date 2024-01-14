@@ -22,6 +22,7 @@ public class RoleDataSeeder(RoleManager<IdentityRole> roleManager, IPermissionMa
             [Buyer] = [
                 ApprovalDemoPermissions.Orders.Default,
                 ApprovalDemoPermissions.Orders.Modify,
+                ApprovalDemoPermissions.Orders.Submit,
                 ApprovalDemoPermissions.Orders.Receive
             ],
             [Packager] = [

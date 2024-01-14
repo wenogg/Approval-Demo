@@ -14,6 +14,7 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using ApprovalDemo.Orders.Workflow;
 using ApprovalDemo.Workflow.Activities;
 using Elsa.Activities.UserTask.Extensions;
 using Elsa.Persistence.EntityFramework.Core.Extensions;
@@ -154,6 +155,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             )
             .AddBookmarkProvider<AuthorizedUserTaskBookmarkProvider>()
             .AddWorkflowContextProvider<ApprovalItemWorkflowContextProvider>()
+            .AddWorkflowContextProvider<OrderWorkflowContextProvider>()
             .AddElsaApiEndpoints();
 
         // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
