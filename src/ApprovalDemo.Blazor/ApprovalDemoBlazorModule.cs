@@ -14,6 +14,7 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using ApprovalDemo.Workflow.Activities;
 using Elsa.Activities.UserTask.Extensions;
 using Elsa.Persistence.EntityFramework.Core.Extensions;
 using Elsa.Persistence.EntityFramework.SqlServer;
@@ -151,6 +152,7 @@ public class ApprovalDemoBlazorModule : AbpModule
                 .AddUserTaskActivities()
                 .AddActivitiesFrom<SetApprovalItemStatusActivity>()
             )
+            .AddBookmarkProvider<AuthorizedUserTaskBookmarkProvider>()
             .AddWorkflowContextProvider<ApprovalItemWorkflowContextProvider>()
             .AddElsaApiEndpoints();
 
