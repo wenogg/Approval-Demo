@@ -1,4 +1,5 @@
 ﻿using ApprovalDemo.ApprovalItems;
+using ApprovalDemo.Orders;
 using AutoMapper;
 using Elsa.Models;
 
@@ -15,5 +16,11 @@ public class ApprovalDemoAutoMapperProfile : Profile
         CreateMap<UpdateApprovalItemDto, ApprovalItem>();
         CreateMap<WorkflowExecutionLogRecord, JournalEntryDto>()
             .ForMember(dest => dest.Message, opt => opt.MapFrom(source => source.ActivityType)); ;
+
+        CreateMap<Order, OrderDto>()
+            .ReverseMap();
+
+        CreateMap<OrderDto, UpdateOrderDto>();
+        CreateMap<UpdateOrderDto, Order>();
     }
 }

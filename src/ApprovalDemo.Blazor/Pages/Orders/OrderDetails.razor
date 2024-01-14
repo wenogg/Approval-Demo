@@ -1,0 +1,45 @@
+﻿@page "/orders/{OrderId}"
+@inherits ApprovalDemoComponentBase
+
+<PageProgress Visible="Loading" Color="Color.Info" />
+<Card>
+    <CardHeader>
+        <h2>Order Details</h2>
+    </CardHeader>
+    <CardBody>
+        <Tabs RenderMode="TabsRenderMode.LazyLoad" SelectedTab="Details">
+            <Items>
+                <Tab Name="Details">Details</Tab>
+                <Tab Name="Journal">Journal</Tab>
+            </Items>
+            <Content>
+                <TabPanel Name="Details">
+                    <Fields>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Name</FieldLabel>
+                            <div>@Order.Item</div>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Is Hot</FieldLabel>
+                            <div>@(Order.IsHot ? "Yes" : "No")</div>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Description</FieldLabel>
+                            <div>@Order.Description</div>
+                        </Field>
+                        <Field ColumnSize="ColumnSize.Is12">
+                            <FieldLabel>Status</FieldLabel>
+                            <div>@Order.Status</div>
+                        </Field>
+                    </Fields>
+                </TabPanel>
+                <TabPanel Name="Journal">
+
+                </TabPanel>
+            </Content>
+        </Tabs>
+    </CardBody>
+    <CardFooter>
+
+    </CardFooter>
+</Card>

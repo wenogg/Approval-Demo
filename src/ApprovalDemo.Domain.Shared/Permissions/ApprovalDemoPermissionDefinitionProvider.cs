@@ -9,6 +9,7 @@ public class ApprovalDemoPermissionDefinitionProvider : PermissionDefinitionProv
     public override void Define(IPermissionDefinitionContext context)
     {
         var ordersGroup = context.AddGroup(ApprovalDemoPermissions.Orders.Default);
+        ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Default, L("List Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Modify, L("Modify Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Prepare, L("Prepare Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Ship, L("Ship Order"));

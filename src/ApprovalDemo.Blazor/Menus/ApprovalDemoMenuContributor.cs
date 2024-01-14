@@ -34,21 +34,14 @@ public class ApprovalDemoMenuContributor : IMenuContributor
             )
         );
 
-        if (MultiTenancyConsts.IsEnabled)
-        {
-            administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);
-        }
-        else
-        {
-            administration.TryRemoveMenuItem(TenantManagementMenuNames.GroupName);
-        }
-
-        administration.SetSubItemOrder(IdentityMenuNames.GroupName, 2);
-        administration.SetSubItemOrder(SettingManagementMenus.GroupName, 3);
-
         _ = context.Menu.AddItem(
             new ApplicationMenuItem("Approval Items", "Approval Items", icon: "fa fa-book")
                 .AddItem(new ApplicationMenuItem("ApprovalDemo.ApprovalItems", "Items", url: "/approval-items"))
+        );
+
+        _ = context.Menu.AddItem(
+            new ApplicationMenuItem("Orders", "Orders", icon: "fa fa-book")
+                .AddItem(new ApplicationMenuItem("ApprovalDemo.Orders", "Orders", url: "/orders"))
         );
 
         return Task.CompletedTask;

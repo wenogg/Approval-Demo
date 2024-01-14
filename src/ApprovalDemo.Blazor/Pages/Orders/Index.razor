@@ -1,0 +1,241 @@
+﻿@page "/orders"
+@using Volo.Abp.Application.Dtos
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Components.Web
+@using ApprovalDemo.Localization
+@using ApprovalDemo.Orders
+
+@inject IStringLocalizer<ApprovalDemoResource> L
+@inherits AbpCrudPageBase<IOrderAppService, OrderDto, int, PagedAndSortedResultRequestDto, ApprovalDemo.Orders.UpdateOrderDto>
+@inject AbpBlazorMessageLocalizerHelper<ApprovalDemoResource> LH
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h2>@L["Orders"]</h2>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModalAsync">Add item</Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="OrderDto"
+                  Data="Entities"
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  PageSize="PageSize">
+            <DataGridColumns>
+                <DataGridEntityActionsColumn TItem="OrderDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="OrderDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="OrderDto"
+                                          Text="@L["Edit"]"
+                                          Clicked="() => OpenEditModalAsync(context)" />
+
+                            <EntityAction TItem="OrderDto"
+                                          Text="@L["Delete"]"
+                                          Clicked="() => DeleteEntityAsync(context)"
+                                          ConfirmationMessage="() => GetDeleteConfirmationMessage(context)" />
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.Item)"
+                                Caption="@L["Item"]">
+                    <DisplayTemplate>
+                        <a href="/orders/@context.Id">@context.Item</a>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.IsHot)"
+                                Caption="Description">
+                    <DisplayTemplate>
+                        @(context.IsHot ? "Yes" : "No")
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.Description)"
+                                Caption="Description">
+                </DataGridColumn>
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.Quantity)"
+                                Caption="Description">
+                </DataGridColumn>
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.Price)"
+                                Caption="Description"
+                                DisplayFormat="{0:C}">
+                </DataGridColumn>
+
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.Status)"
+                                Caption="@L["Type"]">
+                    <DisplayTemplate>
+                        @context.Status.ToString()
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="OrderDto"
+                                Field="@nameof(OrderDto.CreationTime)"
+                                Caption="@L["CreationTime"]">
+                    <DisplayTemplate>
+                        @context.CreationTime.ToLongDateString()
+                    </DisplayTemplate>
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<Modal @ref="@CreateModal">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@L["NewBook"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@CreateValidationsRef" Model="@NewEntity" ValidateOnLoad="false">
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Name</FieldLabel>
+                            <TextEdit @bind-Text="@NewEntity.Item">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <MemoEdit Rows="5" @bind-Text="@NewEntity.Description">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </MemoEdit>
+                        </Field>
+                    </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Is Hot</FieldLabel>
+                            <Switch TValue="bool" @bind-Checked="NewEntity.IsHot" />
+                        </Field>
+                    </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Quantity</FieldLabel>
+                            <NumericPicker TValue="int"
+                                           Min="0"
+                                           @bind-Value="@NewEntity.Quantity">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </NumericPicker>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Price</FieldLabel>
+                            <NumericPicker TValue="decimal"
+                                           Min="0"
+                                           @bind-Value="@NewEntity.Price">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </NumericPicker>
+                        </Field>
+                    </Validation>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateModalAsync">@L["Cancel"]</Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="CreateEntityAsync">@L["Save"]</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="@EditModal">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@EditingEntity.Item</ModalTitle>
+                <CloseButton Clicked="CloseEditModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditValidationsRef" Model="@EditingEntity" ValidateOnLoad="false">
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Name</FieldLabel>
+                            <TextEdit @bind-Text="@EditingEntity.Item">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <MemoEdit Rows="5" @bind-Text="@EditingEntity.Description">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </MemoEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Is Hot</FieldLabel>
+                            <Switch TValue="bool" @bind-Checked="EditingEntity.IsHot" />
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Quantity</FieldLabel>
+                            <NumericPicker TValue="int"
+                                           Min="0"
+                                           @bind-Value="@EditingEntity.Quantity">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </NumericPicker>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Price</FieldLabel>
+                            <NumericPicker TValue="decimal"
+                                           Min="0"
+                                           @bind-Value="@EditingEntity.Price">
+                                <Feedback>
+                                    <ValidationError/>
+                                </Feedback>
+                            </NumericPicker>
+                        </Field>
+                    </Validation>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditModalAsync">@L["Cancel"]</Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="UpdateEntityAsync">@L["Save"]</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
