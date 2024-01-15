@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApprovalDemo.Workflow;
 using ApprovalDemo.Workflow.Activities;
 using Elsa;
-using Elsa.Activities.UserTask.Contracts;
 using Elsa.Models;
 using Elsa.Persistence;
 using Elsa.Persistence.Specifications;
 using Elsa.Persistence.Specifications.WorkflowExecutionLogRecords;
 using Elsa.Services;
 using Elsa.Services.WorkflowStorage;
+using Microsoft.AspNetCore.Authorization;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -34,12 +35,15 @@ public class OrderManager(
     IWorkflowRegistry workflowRegistry,
     IWorkflowDefinitionDispatcher workflowDispatcher,
     IWorkflowInstanceStore workflowInstanceStore,
-    IEnumerable<IUserTaskService> userTaskServices,
+    IAuthorizedUserTaskService userTaskService,
     IWorkflowStorageService workflowStorageService,
     IWorkflowTriggerInterruptor workflowTriggerInterruptor,
-    IWorkflowExecutionLogStore workflowExecutionLogStore)
+    IWorkflowExecutionLogStore workflowExecutionLogStore,
+    IWorkflowBlueprintInspectorService workflowBlueprintInspectorService,
+    IAuthorizationService authorizationService)
     : DomainService, IOrderManager
 {
+    public IWorkflowBlueprintInspectorService WorkflowBlueprintInspectorService { get; } = workflowBlueprintInspectorService;
     private const string WorkflowBlueprintTag = "Order";
 
     /// <summary>
@@ -94,11 +98,15 @@ public class OrderManager(
             return [];
         }
 
-        List<string> actions = [];
-        foreach (var userTaskService in userTaskServices)
+        var actions = new List<string>();
+        var userActions = await userTaskService.GetUserActionsAsync(workflowInstance.Id);
+        foreach (var action in userActions)
         {
-            var userActions = await userTaskService.GetUserActionsAsync(workflowInstance.Id);
-            actions.AddRange(userActions.Select(x => x.Action));
+            var hasPermission = await authorizationService.IsGrantedAsync(action.Permission);
+            if (hasPermission)
+            {
+                actions.Add(action.Action);
+            }
         }
 
         return actions;
@@ -115,6 +123,7 @@ public class OrderManager(
         {
             return;
         }
+
         var input = new AuthorizedUserTaskInput(action, userName);
         await workflowStorageService.UpdateInputAsync(workflowInstance!, new WorkflowInput(input));
         await workflowTriggerInterruptor.InterruptActivityAsync(workflowInstance!, currentActivity.ActivityId);

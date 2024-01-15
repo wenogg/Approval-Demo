@@ -11,6 +11,7 @@ public class ApprovalDemoPermissionDefinitionProvider : PermissionDefinitionProv
         var ordersGroup = context.AddGroup(ApprovalDemoPermissions.Orders.Default);
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Default, L("List Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Modify, L("Modify Order"));
+        ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Submit, L("Submit Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Prepare, L("Prepare Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Ship, L("Ship Order"));
         ordersGroup.AddPermission(ApprovalDemoPermissions.Orders.Receive, L("Receive Order"));

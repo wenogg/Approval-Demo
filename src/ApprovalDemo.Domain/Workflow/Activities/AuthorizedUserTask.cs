@@ -18,11 +18,13 @@ namespace ApprovalDemo.Workflow.Activities;
 )]
 public class AuthorizedUserTask(IContentSerializer serializer) : UserTask(serializer)
 {
+    private readonly IContentSerializer _serializer;
     [ActivityInput(
         Label = "Permission",
         Hint = "The permission required to execute this task",
         SupportedSyntaxes = [SyntaxNames.JavaScript, SyntaxNames.Liquid],
-        DefaultWorkflowStorageProvider = TransientWorkflowStorageProvider.ProviderName
+        DefaultWorkflowStorageProvider = WorkflowInstanceWorkflowStorageProvider.ProviderName,
+        IsDesignerCritical = true
     )]
     public string Permission { get; set; } = default!;
 
@@ -30,6 +32,12 @@ public class AuthorizedUserTask(IContentSerializer serializer) : UserTask(serial
     {
         var input = context.Input as AuthorizedUserTaskInput;
         return input != null && Actions.Contains(input.Action, StringComparer.OrdinalIgnoreCase);
+    }
+
+    protected override IActivityExecutionResult OnExecute(ActivityExecutionContext context)
+    {
+        context.JournalData.Add(nameof(Permission), Permission);
+        return base.OnExecute(context);
     }
 
     protected override IActivityExecutionResult OnResume(ActivityExecutionContext context)

@@ -1,10 +1,10 @@
 {
   "$id": "1",
   "definitionId": "526046342a3e4ac4b29eb9cd5e1b64ce",
-  "versionId": "ff5ae4d8655c4bd6bd49f8a10759d33e",
+  "versionId": "89a22180fa9a4318aff3d4ed0ecdb553",
   "name": "OrderWorkflow",
   "displayName": "Order Workflow",
-  "version": 1,
+  "version": 3,
   "variables": {
     "$id": "2",
     "data": {}
@@ -24,7 +24,7 @@
   "isPublished": true,
   "isLatest": true,
   "tag": "Order",
-  "createdAt": "2024-01-14T02:57:41.8759897Z",
+  "createdAt": "2024-01-15T21:59:40.2860066Z",
   "activities": [
     {
       "$id": "5",
@@ -78,7 +78,8 @@
         }
       ],
       "propertyStorageProviders": {
-        "$id": "14"
+        "$id": "14",
+        "Permission": "WorkflowInstance"
       }
     },
     {
@@ -459,5 +460,5 @@
       "outcome": "Return for correction"
     }
   ],
-  "id": "ff5ae4d8655c4bd6bd49f8a10759d33e"
+  "id": "89a22180fa9a4318aff3d4ed0ecdb553"
 }
