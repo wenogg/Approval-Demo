@@ -5,8 +5,8 @@ using ApprovalDemo.Permissions;
 using Microsoft.AspNetCore.Identity;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Identity;
 using Volo.Abp.PermissionManagement;
+using IdentityRole = Volo.Abp.Identity.IdentityRole;
 
 namespace ApprovalDemo.DataSeeders;
 

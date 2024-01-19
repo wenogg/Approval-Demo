@@ -13,6 +13,10 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using Elsa.EntityFrameworkCore.Extensions;
+using Elsa.EntityFrameworkCore.Modules.Management;
+using Elsa.EntityFrameworkCore.Modules.Runtime;
+using Elsa.Extensions;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
@@ -123,20 +127,58 @@ public class ApprovalDemoBlazorModule : AbpModule
 
     private void ConfigureElsa(ServiceConfigurationContext context, IConfiguration configuration)
     {
-        var elsaSection = configuration.GetSection("Elsa");
-        context.Services.AddRazorPages();
+        context.Services.AddElsa(elsa =>
+        {
+            var connection = configuration.GetConnectionString("Default");
+            // Configure Management layer to use EF Core.
+            elsa.UseWorkflowManagement(management =>
+            {
 
-        context.Services.AddCors(cors =>
-            cors.AddDefaultPolicy(policy =>
-                policy
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowAnyOrigin()
-                    .WithExposedHeaders("Content-Disposition")));
+                management.UseEntityFrameworkCore(opt =>
+                {
+                    opt.RunMigrations = true;
+                    opt.UseSqlServer(connection!);
+                });
+            });
 
+            // Configure Runtime layer to use EF Core.
+            elsa.UseWorkflowRuntime(runtime => runtime.UseEntityFrameworkCore( opt =>
+            {
+                opt.RunMigrations = true;
+                opt.UseSqlServer(connection!);
+            }));
 
-        // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
-        var currentAssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
+            // Default Identity features for authentication/authorization.
+            // elsa.UseIdentity(identity =>
+            // {
+            //     identity.TokenOptions = options => options.SigningKey = "sufficiently-large-secret-signing-key"; // This key needs to be at least 256 bits long.
+            //     identity.UseAdminUserProvider();
+            // });
+
+            // Configure ASP.NET authentication/authorization.
+            //elsa.UseDefaultAuthentication(auth => auth.UseAdminApiKey());
+
+            // Expose Elsa API endpoints.
+            elsa.UseWorkflowsApi();
+
+            // Setup a SignalR hub for real-time updates from the server.
+            elsa.UseRealTimeWorkflows();
+
+            // Enable C# workflow expressions
+            elsa.UseCSharp();
+
+            // Enable HTTP activities.
+            elsa.UseHttp();
+
+            // Use timer activities.
+            elsa.UseScheduling();
+
+            // Register custom activities from the application, if any.
+            elsa.AddActivitiesFrom<Program>();
+
+            // Register custom workflows from the application, if any.
+            elsa.AddWorkflowsFrom<Program>();
+        });
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)

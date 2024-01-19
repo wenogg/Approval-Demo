@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ApprovalDemo.Data;
+using Elsa.EntityFrameworkCore.Modules.Alterations;
+using Elsa.EntityFrameworkCore.Modules.Labels;
+using Elsa.EntityFrameworkCore.Modules.Management;
+using Elsa.EntityFrameworkCore.Modules.Runtime;
 using Volo.Abp.DependencyInjection;
 
 namespace ApprovalDemo.EntityFrameworkCore;
@@ -22,5 +26,25 @@ public class EntityFrameworkCoreApprovalDemoDbSchemaMigrator(IServiceProvider se
             .GetRequiredService<ApprovalDemoDbContext>()
             .Database
             .MigrateAsync();
+
+        // await serviceProvider
+        //     .GetRequiredService<ManagementElsaDbContext>()
+        //     .Database
+        //     .MigrateAsync();
+
+        // await serviceProvider
+        //     .GetRequiredService<RuntimeElsaDbContext>()
+        //     .Database
+        //     .MigrateAsync();
+        //
+        // await serviceProvider
+        //     .GetRequiredService<LabelsElsaDbContext>()
+        //     .Database
+        //     .MigrateAsync();
+        //
+        // await serviceProvider
+        //     .GetRequiredService<AlterationsElsaDbContext>()
+        //     .Database
+        //     .MigrateAsync();
     }
 }

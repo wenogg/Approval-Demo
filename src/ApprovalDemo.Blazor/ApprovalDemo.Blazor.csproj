@@ -29,6 +29,13 @@
     <ProjectReference Include="..\ApprovalDemo.Application\ApprovalDemo.Application.csproj" />
     <ProjectReference Include="..\ApprovalDemo.HttpApi\ApprovalDemo.HttpApi.csproj" />
     <ProjectReference Include="..\ApprovalDemo.EntityFrameworkCore\ApprovalDemo.EntityFrameworkCore.csproj" />
+    <PackageReference Include="Elsa" Version="3.0.3" />
+    <PackageReference Include="Elsa.CSharp" Version="3.0.3" />
+    <PackageReference Include="Elsa.EntityFrameworkCore" Version="3.0.3" />
+    <PackageReference Include="Elsa.EntityFrameworkCore.SqlServer" Version="3.0.3" />
+    <PackageReference Include="Elsa.Identity" Version="3.0.3" />
+    <PackageReference Include="Elsa.Scheduling" Version="3.0.3" />
+    <PackageReference Include="Elsa.Workflows.Api" Version="3.0.3" />
     <PackageReference Include="Volo.Abp.Autofac" Version="8.0.0" />
     <PackageReference Include="Volo.Abp.Swashbuckle" Version="8.0.0" />
     <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.0.0" />
