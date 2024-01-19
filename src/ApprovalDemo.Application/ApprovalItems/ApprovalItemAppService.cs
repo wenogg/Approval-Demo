@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Elsa.Models;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -32,8 +31,8 @@ public class ApprovalItemAppService(IRepository<ApprovalItem, int> repository, I
 
         var item = await MapToGetOutputDtoAsync(entity);
         item.Actions = await approvalItemManager.GetAvailableActions(id);
-        var entries = await approvalItemManager.GetJournalEntries(id);
-        item.Journal = ObjectMapper.Map<List<WorkflowExecutionLogRecord>, List<JournalEntryDto>>(entries);
+        // var entries = await approvalItemManager.GetJournalEntries(id);
+        // item.Journal = ObjectMapper.Map<List<WorkflowExecutionLogRecord>, List<JournalEntryDto>>(entries);
         return item;
     }
 }

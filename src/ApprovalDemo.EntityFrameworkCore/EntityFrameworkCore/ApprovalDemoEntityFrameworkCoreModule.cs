@@ -1,10 +1,6 @@
-﻿using System;
-using Elsa.Persistence.EntityFramework.Core;
-using Elsa.Persistence.EntityFramework.SqlServer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Uow;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -64,17 +60,17 @@ public class ApprovalDemoEntityFrameworkCoreModule : AbpModule
     /// <param name="context"></param>
     private static void ConfigureElsaMigrationContext(ServiceConfigurationContext context)
     {
-        var configuration = context.Services.GetSingletonInstance<IConfiguration>();
-        var migrationsAssemblyMarker = typeof(SqlServerElsaContextFactory);
-        var connectionString = configuration.GetConnectionString("Default");
-
-        context.Services.AddDbContext<ElsaContext>(options =>
-        {
-           options
-                .UseSqlServer(connectionString: connectionString,
-                    sqlOptions => sqlOptions
-                        .MigrationsAssembly(migrationsAssemblyMarker.Assembly.GetName().Name)
-                        .MigrationsHistoryTable(ElsaContext.MigrationsHistoryTable, ElsaContext.ElsaSchema));
-        });
+        // var configuration = context.Services.GetSingletonInstance<IConfiguration>();
+        // var migrationsAssemblyMarker = typeof(SqlServerElsaContextFactory);
+        // var connectionString = configuration.GetConnectionString("Default");
+        //
+        // context.Services.AddDbContext<ElsaContext>(options =>
+        // {
+        //    options
+        //         .UseSqlServer(connectionString: connectionString,
+        //             sqlOptions => sqlOptions
+        //                 .MigrationsAssembly(migrationsAssemblyMarker.Assembly.GetName().Name)
+        //                 .MigrationsHistoryTable(ElsaContext.MigrationsHistoryTable, ElsaContext.ElsaSchema));
+        // });
     }
 }

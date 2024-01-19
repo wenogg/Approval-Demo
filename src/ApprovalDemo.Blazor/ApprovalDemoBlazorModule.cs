@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using ApprovalDemo.ApprovalItems.Workflow;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
@@ -14,14 +13,7 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
-using ApprovalDemo.Orders.Workflow;
-using ApprovalDemo.Workflow.Activities;
-using Elsa.Activities.UserTask.Extensions;
-using Elsa.Persistence.EntityFramework.Core.Extensions;
-using Elsa.Persistence.EntityFramework.SqlServer;
-using Elsa.Providers.Workflows;
 using OpenIddict.Validation.AspNetCore;
-using Storage.Net;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme;
@@ -142,28 +134,9 @@ public class ApprovalDemoBlazorModule : AbpModule
                     .AllowAnyOrigin()
                     .WithExposedHeaders("Content-Disposition")));
 
-        context.Services
-            // Add services used for the workflows runtime.
-            .AddElsa(elsa => elsa
-                .UseEntityFrameworkPersistence(ef =>
-                    ef.UseSqlServer(configuration.GetConnectionString("Default") ?? string.Empty), autoRunMigrations: false)
-                .AddConsoleActivities()
-                .AddHttpActivities(elsaSection.GetSection("Server").Bind)
-                .AddEmailActivities(elsaSection.GetSection("Smtp").Bind)
-                .AddUserTaskActivities()
-                .AddActivitiesFrom<SetApprovalItemStatusActivity>()
-            )
-            .AddBookmarkProvider<AuthorizedUserTaskBookmarkProvider>()
-            .AddWorkflowContextProvider<ApprovalItemWorkflowContextProvider>()
-            .AddWorkflowContextProvider<OrderWorkflowContextProvider>()
-            .AddElsaApiEndpoints();
 
         // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
         var currentAssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
-
-        context.Services.Configure<BlobStorageWorkflowProviderOptions>(options =>
-            options.BlobStorageFactory = () =>
-                StorageFactory.Blobs.DirectoryFiles(Path.Combine(currentAssemblyPath, "ApprovalItems", "Workflow")));
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -316,7 +289,6 @@ public class ApprovalDemoBlazorModule : AbpModule
         });
 
         app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-        app.UseHttpActivities();
         app.UseConfiguredEndpoints(endpoints =>
         {
             endpoints.MapControllers();

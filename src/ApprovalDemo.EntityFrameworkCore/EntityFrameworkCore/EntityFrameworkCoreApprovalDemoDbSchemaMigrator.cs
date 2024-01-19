@@ -3,22 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ApprovalDemo.Data;
-using Elsa.Persistence.EntityFramework.Core;
 using Volo.Abp.DependencyInjection;
 
 namespace ApprovalDemo.EntityFrameworkCore;
 
-public class EntityFrameworkCoreApprovalDemoDbSchemaMigrator
+public class EntityFrameworkCoreApprovalDemoDbSchemaMigrator(IServiceProvider serviceProvider)
     : IApprovalDemoDbSchemaMigrator, ITransientDependency
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public EntityFrameworkCoreApprovalDemoDbSchemaMigrator(
-        IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task MigrateAsync()
     {
         /* We intentionally resolve the ApprovalDemoDbContext
@@ -27,13 +18,8 @@ public class EntityFrameworkCoreApprovalDemoDbSchemaMigrator
          * current scope.
          */
 
-        await _serviceProvider
+        await serviceProvider
             .GetRequiredService<ApprovalDemoDbContext>()
-            .Database
-            .MigrateAsync();
-
-        await _serviceProvider
-            .GetRequiredService<ElsaContext>()
             .Database
             .MigrateAsync();
     }
