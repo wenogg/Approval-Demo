@@ -39,11 +39,9 @@ public class OrderManager(
     IWorkflowStorageService workflowStorageService,
     IWorkflowTriggerInterruptor workflowTriggerInterruptor,
     IWorkflowExecutionLogStore workflowExecutionLogStore,
-    IWorkflowBlueprintInspectorService workflowBlueprintInspectorService,
     IAuthorizationService authorizationService)
     : DomainService, IOrderManager
 {
-    public IWorkflowBlueprintInspectorService WorkflowBlueprintInspectorService { get; } = workflowBlueprintInspectorService;
     private const string WorkflowBlueprintTag = "Order";
 
     /// <summary>
