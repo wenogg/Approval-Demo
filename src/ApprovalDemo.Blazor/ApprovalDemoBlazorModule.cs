@@ -13,10 +13,20 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using Elsa;
+using Elsa.Api.Client.HttpMessageHandlers;
 using Elsa.EntityFrameworkCore.Extensions;
 using Elsa.EntityFrameworkCore.Modules.Management;
 using Elsa.EntityFrameworkCore.Modules.Runtime;
 using Elsa.Extensions;
+using Elsa.Studio.Core.BlazorServer.Extensions;
+using Elsa.Studio.Dashboard.Extensions;
+using Elsa.Studio.Extensions;
+using Elsa.Studio.Login.HttpMessageHandlers;
+using Elsa.Studio.Shell.Extensions;
+using Elsa.Studio.Workflows.Designer.Extensions;
+using Elsa.Studio.Workflows.Extensions;
+using FastEndpoints;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
@@ -123,6 +133,15 @@ public class ApprovalDemoBlazorModule : AbpModule
         ConfigureRouter();
         ConfigureMenu();
         ConfigureElsa(context, configuration);
+
+        context.Services.AddRazorPages();
+        context.Services.AddServerSideBlazor(options =>
+        {
+            // Register the root components.
+            options.RootComponents.RegisterCustomElsaStudioElements();
+        });
+        context.Services.AddDashboardModule();
+        context.Services.AddWorkflowsModule();
     }
 
     private void ConfigureElsa(ServiceConfigurationContext context, IConfiguration configuration)
@@ -158,8 +177,12 @@ public class ApprovalDemoBlazorModule : AbpModule
             // Configure ASP.NET authentication/authorization.
             //elsa.UseDefaultAuthentication(auth => auth.UseAdminApiKey());
 
+            EndpointSecurityOptions.DisableSecurity();
             // Expose Elsa API endpoints.
-            elsa.UseWorkflowsApi();
+            elsa
+                .UseHttp()
+                .AddFastEndpointsAssembly<Program>()
+                .UseWorkflowsApi();
 
             // Setup a SignalR hub for real-time updates from the server.
             elsa.UseRealTimeWorkflows();
@@ -178,6 +201,13 @@ public class ApprovalDemoBlazorModule : AbpModule
 
             // Register custom workflows from the application, if any.
             elsa.AddWorkflowsFrom<Program>();
+
+            elsa.Services.AddCore();
+            elsa.Services.AddShell(options => options.DisableAuthorization = true);
+            elsa.Services.AddRemoteBackend(
+                elsaClient => elsaClient.AuthenticationHandler = typeof(ApiKeyHttpMessageHandler),
+                options => configuration.GetSection("Backend").Bind(options));
+
         });
     }
 
@@ -324,13 +354,21 @@ public class ApprovalDemoBlazorModule : AbpModule
         app.UseDynamicClaims();
         app.UseAuthorization();
 
+
+
+        app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+
+        app.UseWorkflows(); // Use Elsa middleware to handle HTTP requests mapped to HTTP Endpoint activities.
+        app.UseWorkflowsSignalRHubs(); // Optional SignalR integration. Elsa Studio uses SignalR to receive real-time updates from the server.
+        app.UseWorkflowsApi();
+
         app.UseSwagger();
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ApprovalDemo API");
         });
 
-        app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
         app.UseConfiguredEndpoints(endpoints =>
         {
             endpoints.MapControllers();

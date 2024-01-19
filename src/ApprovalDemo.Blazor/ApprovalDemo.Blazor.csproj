@@ -16,6 +16,9 @@
   <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.3.2" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.3.2" />
+    <PackageReference Include="Elsa.Studio" Version="3.0.3" />
+    <PackageReference Include="Elsa.Studio.Core.BlazorServer" Version="3.0.3" />
+    <PackageReference Include="Elsa.Studio.Login.BlazorServer" Version="3.0.3" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
   </ItemGroup>

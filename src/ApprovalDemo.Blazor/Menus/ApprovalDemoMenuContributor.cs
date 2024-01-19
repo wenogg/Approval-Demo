@@ -44,6 +44,11 @@ public class ApprovalDemoMenuContributor : IMenuContributor
                 .AddItem(new ApplicationMenuItem("ApprovalDemo.Orders", "Orders", url: "/orders"))
         );
 
+        _ = context.Menu.AddItem(
+            new ApplicationMenuItem("Workflows", "Workflows", icon: "fa fa-book")
+                .AddItem(new ApplicationMenuItem("Workflows", "Workflows", url: "/elsa/dashboard"))
+        );
+
         return Task.CompletedTask;
     }
 }
