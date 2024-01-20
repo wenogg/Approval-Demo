@@ -27,10 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ApprovalItems\Workflow\approval-item-workflow.json">
+    <None Update="Orders\Workflow\order-workflow.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Orders\Workflow\order-workflow.json">
+    <None Update="ApprovalItems\Workflow\ping.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
