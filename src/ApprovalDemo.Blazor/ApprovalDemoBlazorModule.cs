@@ -27,6 +27,7 @@ using Elsa.Studio.Shell.Extensions;
 using Elsa.Studio.Workflows.Designer.Extensions;
 using Elsa.Studio.Workflows.Extensions;
 using FastEndpoints;
+using FluentStorage;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
@@ -51,6 +52,7 @@ using Volo.Abp.OpenIddict;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Elsa.Extensions;
 
 namespace ApprovalDemo.Blazor;
 
@@ -208,6 +210,11 @@ public class ApprovalDemoBlazorModule : AbpModule
                 elsaClient => elsaClient.AuthenticationHandler = typeof(ApiKeyHttpMessageHandler),
                 options => configuration.GetSection("Backend").Bind(options));
 
+            // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
+            var currentAssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
+            var workflowsDirectory = Path.Combine(currentAssemblyPath, "ApprovalItems", "Workflow");
+
+            elsa.UseFluentStorageProvider(storage => storage.BlobStorage = sp => StorageFactory.Blobs.DirectoryFiles(Path.Combine(workflowsDirectory)));
         });
     }
 
