@@ -1,9 +1,9 @@
 {
-  "id": "90c259a98c5be895",
+  "id": "190fa391923d3600",
   "definitionId": "cdf2d0df92c61878",
   "name": "Ping",
-  "createdAt": "2024-01-19T22:18:00.9171963+00:00",
-  "version": 1,
+  "createdAt": "2024-01-20T04:47:59.4533794+00:00",
+  "version": 7,
   "toolVersion": "3.0.0.0",
   "variables": [
     {
@@ -23,6 +23,7 @@
   "isLatest": true,
   "isPublished": true,
   "options": {
+    "usableAsActivity": false,
     "autoUpdateConsumingWorkflows": false
   },
   "root": {
@@ -105,9 +106,58 @@
             }
           }
         }
+      },
+      {
+        "approvalItemId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
+          }
+        },
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "PendingApproval"
+          }
+        },
+        "newStatus": null,
+        "item": null,
+        "id": "ae21d333afe263a7",
+        "nodeId": "Workflow1:c3248a026e265300:ae21d333afe263a7",
+        "name": "SetApprovalItemStatusActivity1",
+        "type": "ApprovalDemo.ApprovalItems.Workflow.SetApprovalItemStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 1032.929931640625,
+              "y": -340
+            },
+            "size": {
+              "width": 267.5578918457031,
+              "height": 49.45602035522461
+            }
+          }
+        }
       }
     ],
     "connections": [
+      {
+        "source": {
+          "activity": "bbd7ee7f5764f3fb",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "ae21d333afe263a7",
+          "port": "In"
+        }
+      },
       {
         "source": {
           "activity": "6139fbbce857eec0",

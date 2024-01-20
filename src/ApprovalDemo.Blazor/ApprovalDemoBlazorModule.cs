@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ApprovalDemo.ApprovalItems.Workflow;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
@@ -199,7 +200,8 @@ public class ApprovalDemoBlazorModule : AbpModule
             elsa.UseScheduling();
 
             // Register custom activities from the application, if any.
-            elsa.AddActivitiesFrom<Program>();
+            elsa.AddActivitiesFrom<Program>()
+                .AddActivitiesFrom<SetApprovalItemStatusActivity>();
 
             // Register custom workflows from the application, if any.
             elsa.AddWorkflowsFrom<Program>();
