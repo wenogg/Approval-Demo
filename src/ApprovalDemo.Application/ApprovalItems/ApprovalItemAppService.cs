@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -20,7 +19,7 @@ public class ApprovalItemAppService(IRepository<ApprovalItem, int> repository, I
 
     public Task ApplyTransition(int id, string transition)
     {
-        return approvalItemManager.ApplyTransition(id, transition);
+        return approvalItemManager.ApplyTransition(id, transition, CurrentUser.UserName!);
     }
 
     public override async Task<ApprovalItemDto> GetAsync(int id)

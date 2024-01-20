@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ApprovalDemo.Workflow.Activities;
 using Elsa.Common.Models;
 using Elsa.Workflows.Management.Contracts;
 using Elsa.Workflows.Management.Entities;
 using Elsa.Workflows.Management.Filters;
-using Elsa.Workflows.Models;
 using Elsa.Workflows.Runtime.Contracts;
+using Elsa.Workflows.Runtime.Entities;
+using Elsa.Workflows.Runtime.Filters;
 using Elsa.Workflows.Runtime.Options;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
@@ -22,20 +24,18 @@ public interface IApprovalItemManager : IDomainService
 
     Task<List<string>> GetAvailableActions(int id);
 
-    public Task ApplyTransition(int id, string action);
-
     public Task ApplyTransition(int id, string action, string userName);
-
-    // Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id);
 }
 
 public class ApprovalItemManager(
     IRepository<ApprovalItem, int> approvalItemRepository,
     IWorkflowDefinitionStore workflowDefinitionStore,
-    IWorkflowRuntime workflowRuntime)
+    IWorkflowRuntime workflowRuntime,
+    IWorkflowInstanceStore workflowInstanceStore,
+    IBookmarkStore bookmarkStore)
     : DomainService, IApprovalItemManager
 {
-    private const string WorkflowDefinitionName = "Ping";
+    private const string WorkflowDefinitionName = "ApprovalItemWorkflow";
 
     /// <summary>
     /// Updates the status of the ApprovalItem
@@ -63,19 +63,26 @@ public class ApprovalItemManager(
             throw new UserFriendlyException($"Could not find approval item with id {id}");
         }
 
-        var workflowDefinition = await FindWorkflowDefinition();
+        var workflowDefinition = await FindWorkflowDefinition(WorkflowDefinitionName);
+        if (workflowDefinition == null)
+        {
+            throw new UserFriendlyException($"Could not find workflow definition {WorkflowDefinitionName}");
+        }
 
         // Dispatch the workflow.
         await InvokeWorkflow(item, workflowDefinition);
     }
 
 
-    private async Task InvokeWorkflow(ApprovalItem item, WorkflowDefinition? workflowDefinition)
+    /// <summary>
+    /// Starts the workflow for the ApprovalItem
+    /// </summary>
+    private async Task InvokeWorkflow(ApprovalItem item, WorkflowDefinition workflowDefinition)
     {
-        var startOptions = new StartWorkflowRuntimeOptions()
+        var startOptions = new StartWorkflowRuntimeOptions
         {
             CorrelationId = item.Id.ToString(),
-            Input = new Dictionary<string, object>()
+            Input = new Dictionary<string, object>
             {
                 ["item.Id"] = item.Id
             },
@@ -84,11 +91,11 @@ public class ApprovalItemManager(
         await workflowRuntime.StartWorkflowAsync(workflowDefinition.DefinitionId, startOptions);
     }
 
-    private async Task<WorkflowDefinition?> FindWorkflowDefinition()
+    private async Task<WorkflowDefinition?> FindWorkflowDefinition(string workflowName)
     {
         var filter = new WorkflowDefinitionFilter()
         {
-            Name = WorkflowDefinitionName,
+            Name = workflowName,
             VersionOptions = VersionOptions.Published
         };
         var workflowBlueprint = await workflowDefinitionStore.FindAsync(filter);
@@ -104,70 +111,79 @@ public class ApprovalItemManager(
     /// <summary>
     /// Returns the available actions for the ApprovalItem
     /// </summary>
-    public Task<List<string>> GetAvailableActions(int id)
+    public async Task<List<string>> GetAvailableActions(int id)
     {
-        return Task.FromResult(new List<string>());
-        // var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
-        // if (workflowInstance == null)
-        // {
-        //     return [];
-        // }
-        //
-        // List<string> actions = [];
-        // foreach (var userTaskService in userTaskServices)
-        // {
-        //     var userActions = await userTaskService.GetUserActionsAsync(workflowInstance.Id);
-        //     actions.AddRange(userActions.Select(x => x.Action));
-        // }
-        //
-        // return actions;
+        var workflowInstanceFilter = new WorkflowInstanceFilter()
+        {
+            CorrelationId = id.ToString()
+        };
+        var workflowInstance = await workflowInstanceStore.FindAsync(workflowInstanceFilter);
+        if (workflowInstance == null)
+        {
+            return [];
+        }
+
+        var bookmarks = await GetBookmarks(workflowInstance);
+        var list = bookmarks
+            .Where(s => s.Payload is UserActionBookmarkPayload)
+            .Select(s => s.Payload)
+            .Cast<UserActionBookmarkPayload>()
+            .Select(s => s.Action)
+            .ToList();
+        return list;
+    }
+
+    /// <summary>
+    /// Retrieves stored bookmarks for a workflow instance
+    /// </summary>
+    /// <param name="workflowInstance"></param>
+    /// <returns></returns>
+    private async Task<IEnumerable<StoredBookmark>> GetBookmarks(WorkflowInstance workflowInstance)
+    {
+        var bookmarkFiler = new BookmarkFilter()
+        {
+            WorkflowInstanceId = workflowInstance.Id
+        };
+        var bookmarks = await bookmarkStore.FindManyAsync(bookmarkFiler);
+        return bookmarks;
     }
 
     /// <summary>
     /// Applies a transition to the ApprovalItem
     /// </summary>
-    public Task ApplyTransition(int id, string action)
+    public async Task ApplyTransition(int id, string action, string userName)
     {
-        return Task.CompletedTask;
-        // var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
-        // var currentActivity = workflowInstance?.BlockingActivities.FirstOrDefault();
-        // if (currentActivity == null)
-        // {
-        //     return;
-        // }
-        // await workflowStorageService.UpdateInputAsync(workflowInstance!, new WorkflowInput(action));
-        // await workflowTriggerInterruptor.InterruptActivityAsync(workflowInstance!, currentActivity.ActivityId);
-    }
+        var workflowInstanceFilter = new WorkflowInstanceFilter()
+        {
+            CorrelationId = id.ToString()
+        };
+        var workflowInstance = await workflowInstanceStore.FindAsync(workflowInstanceFilter);
+        if (workflowInstance == null)
+        {
+            throw new UserFriendlyException($"Could not find workflow instance with correlation id {id}");
+        }
 
-    public Task ApplyTransition(int id, string action, string userName)
-    {
-        return Task.CompletedTask;
-        // var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
-        // var currentActivity = workflowInstance?.BlockingActivities.FirstOrDefault();
-        // if (currentActivity == null)
-        // {
-        //     return;
-        // }
-        // var input = new AuthorizedUserTaskInput(action, userName);
-        // await workflowStorageService.UpdateInputAsync(workflowInstance!, new WorkflowInput(input));
-        // await workflowTriggerInterruptor.InterruptActivityAsync(workflowInstance!, currentActivity.ActivityId);
-    }
+        var bookmarks = await GetBookmarks(workflowInstance);
+        var bookmarkToResume = bookmarks
+            .FirstOrDefault(s =>
+                s.Payload is UserActionBookmarkPayload payload
+                && payload.Action == action);
 
-    /// <summary>
-    /// Returns the workflow journal entries for the ApprovalItem
-    /// </summary>
-    // public async Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id)
-    // {
-    //     var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
-    //     if (workflowInstance == null)
-    //     {
-    //         return [];
-    //     }
-    //
-    //     var specification = new WorkflowInstanceIdSpecification(workflowInstance.Id);
-    //     var totalCount = await workflowExecutionLogStore.CountAsync(specification);
-    //     var orderBy = OrderBySpecification.OrderBy<WorkflowExecutionLogRecord>(x => x.Timestamp);
-    //     var records = (await workflowExecutionLogStore.FindManyAsync(specification, orderBy)).ToList();
-    //     return records;
-    // }
+        if (bookmarkToResume == null)
+        {
+            throw new UserFriendlyException($"Could not find bookmark for {action}");
+        }
+
+        var userTaskInput = new AuthorizedUserTaskInput(action, userName);
+        var inputPayload = new Dictionary<string, object>
+        {
+            [UserActionBookmarkPayload.InputName] = userTaskInput
+        };
+        var options = new ResumeWorkflowRuntimeOptions
+        {
+            BookmarkId = bookmarkToResume.BookmarkId,
+            Input = inputPayload
+        };
+        await workflowRuntime.ResumeWorkflowAsync(workflowInstance.Id, options);
+    }
 }

@@ -14,6 +14,7 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using ApprovalDemo.Workflow.Activities;
 using Elsa;
 using Elsa.Api.Client.HttpMessageHandlers;
 using Elsa.EntityFrameworkCore.Extensions;
@@ -23,11 +24,9 @@ using Elsa.Extensions;
 using Elsa.Studio.Core.BlazorServer.Extensions;
 using Elsa.Studio.Dashboard.Extensions;
 using Elsa.Studio.Extensions;
-using Elsa.Studio.Login.HttpMessageHandlers;
 using Elsa.Studio.Shell.Extensions;
 using Elsa.Studio.Workflows.Designer.Extensions;
 using Elsa.Studio.Workflows.Extensions;
-using FastEndpoints;
 using FluentStorage;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
@@ -53,7 +52,6 @@ using Volo.Abp.OpenIddict;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-using Elsa.Extensions;
 
 namespace ApprovalDemo.Blazor;
 
@@ -201,7 +199,8 @@ public class ApprovalDemoBlazorModule : AbpModule
 
             // Register custom activities from the application, if any.
             elsa.AddActivitiesFrom<Program>()
-                .AddActivitiesFrom<SetApprovalItemStatusActivity>();
+                .AddActivitiesFrom<SetApprovalItemStatusActivity>()
+                .AddActivitiesFrom<AuthorizedUserTask>();
 
             // Register custom workflows from the application, if any.
             elsa.AddWorkflowsFrom<Program>();
@@ -216,7 +215,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             var currentAssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
             var workflowsDirectory = Path.Combine(currentAssemblyPath, "ApprovalItems", "Workflow");
 
-            elsa.UseFluentStorageProvider(storage => storage.BlobStorage = sp => StorageFactory.Blobs.DirectoryFiles(Path.Combine(workflowsDirectory)));
+            elsa.UseFluentStorageProvider(storage => storage.BlobStorage = _ => StorageFactory.Blobs.DirectoryFiles(Path.Combine(workflowsDirectory)));
         });
     }
 
