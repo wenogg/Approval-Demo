@@ -1,1 +1,123 @@
-{"id":"90c259a98c5be895","definitionId":"cdf2d0df92c61878","name":"Ping","createdAt":"2024-01-19T22:18:00.9171963+00:00","version":1,"toolVersion":"3.0.0.0","variables":[{"id":"ed6bc1d4e3053901","name":"CanEdit","typeName":"Boolean","isArray":false,"value":"True","storageDriverTypeName":"Elsa.Workflows.Services.WorkflowStorageDriver, Elsa.Workflows.Core"}],"inputs":[],"outputs":[],"outcomes":[],"customProperties":{},"isReadonly":false,"isLatest":true,"isPublished":true,"options":{"autoUpdateConsumingWorkflows":false},"root":{"type":"Elsa.Flowchart","version":1,"id":"c3248a026e265300","nodeId":"Workflow1:c3248a026e265300","metadata":{},"customProperties":{"source":"FlowchartJsonConverter.cs:45","notFoundConnections":[],"canStartWorkflow":false,"runAsynchronously":false},"activities":[{"variable":{"id":"ed6bc1d4e3053901","name":"CanEdit","typeName":"Boolean","value":"True","storageDriverTypeName":"Elsa.Workflows.Services.WorkflowStorageDriver, Elsa.Workflows.Core"},"value":{"typeName":"Object","expression":{"type":"Literal","value":"false"}},"id":"bbd7ee7f5764f3fb","nodeId":"Workflow1:c3248a026e265300:bbd7ee7f5764f3fb","name":"UpdateCanEdit","type":"Elsa.SetVariable","version":1,"customProperties":{"canStartWorkflow":false,"runAsynchronously":false},"metadata":{"designer":{"position":{"x":700,"y":-340},"size":{"width":252.48959350585938,"height":49.45602035522461}},"displayText":"Update Can Edit Variable"}},{"text":{"typeName":"String","expression":{"type":"Literal","value":"Test first workflow"}},"id":"6139fbbce857eec0","nodeId":"Workflow1:c3248a026e265300:6139fbbce857eec0","name":"WriteLine1","type":"Elsa.WriteLine","version":1,"customProperties":{"canStartWorkflow":false,"runAsynchronously":false},"metadata":{"designer":{"position":{"x":265,"y":-365.2719898223877},"size":{"width":340,"height":100}}}}],"connections":[{"source":{"activity":"6139fbbce857eec0","port":"Done"},"target":{"activity":"bbd7ee7f5764f3fb","port":"In"}}]}}
+{
+  "id": "90c259a98c5be895",
+  "definitionId": "cdf2d0df92c61878",
+  "name": "Ping",
+  "createdAt": "2024-01-19T22:18:00.9171963+00:00",
+  "version": 1,
+  "toolVersion": "3.0.0.0",
+  "variables": [
+    {
+      "id": "ed6bc1d4e3053901",
+      "name": "CanEdit",
+      "typeName": "Boolean",
+      "isArray": false,
+      "value": "True",
+      "storageDriverTypeName": "Elsa.Workflows.Services.WorkflowStorageDriver, Elsa.Workflows.Core"
+    }
+  ],
+  "inputs": [],
+  "outputs": [],
+  "outcomes": [],
+  "customProperties": {},
+  "isReadonly": false,
+  "isLatest": true,
+  "isPublished": true,
+  "options": {
+    "autoUpdateConsumingWorkflows": false
+  },
+  "root": {
+    "type": "Elsa.Flowchart",
+    "version": 1,
+    "id": "c3248a026e265300",
+    "nodeId": "Workflow1:c3248a026e265300",
+    "metadata": {},
+    "customProperties": {
+      "source": "FlowchartJsonConverter.cs:45",
+      "notFoundConnections": [],
+      "canStartWorkflow": false,
+      "runAsynchronously": false
+    },
+    "activities": [
+      {
+        "variable": {
+          "id": "ed6bc1d4e3053901",
+          "name": "CanEdit",
+          "typeName": "Boolean",
+          "value": "True",
+          "storageDriverTypeName": "Elsa.Workflows.Services.WorkflowStorageDriver, Elsa.Workflows.Core"
+        },
+        "value": {
+          "typeName": "Object",
+          "expression": {
+            "type": "Literal",
+            "value": "false"
+          }
+        },
+        "id": "bbd7ee7f5764f3fb",
+        "nodeId": "Workflow1:c3248a026e265300:bbd7ee7f5764f3fb",
+        "name": "UpdateCanEdit",
+        "type": "Elsa.SetVariable",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 700,
+              "y": -340
+            },
+            "size": {
+              "width": 252.48959350585938,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Update Can Edit Variable"
+        }
+      },
+      {
+        "text": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Test first workflow"
+          }
+        },
+        "id": "6139fbbce857eec0",
+        "nodeId": "Workflow1:c3248a026e265300:6139fbbce857eec0",
+        "name": "WriteLine1",
+        "type": "Elsa.WriteLine",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 265,
+              "y": -365.2719898223877
+            },
+            "size": {
+              "width": 340,
+              "height": 100
+            }
+          }
+        }
+      }
+    ],
+    "connections": [
+      {
+        "source": {
+          "activity": "6139fbbce857eec0",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "bbd7ee7f5764f3fb",
+          "port": "In"
+        }
+      }
+    ]
+  }
+}

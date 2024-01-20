@@ -1,6 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ApprovalDemo.Workflow.Activities;
+using Elsa.Common.Models;
+using Elsa.Workflows.Management.Contracts;
+using Elsa.Workflows.Management.Entities;
+using Elsa.Workflows.Management.Filters;
+using Elsa.Workflows.Models;
+using Elsa.Workflows.Runtime.Contracts;
+using Elsa.Workflows.Runtime.Options;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -23,11 +30,12 @@ public interface IApprovalItemManager : IDomainService
 }
 
 public class ApprovalItemManager(
-    IRepository<ApprovalItem, int> approvalItemRepository)
+    IRepository<ApprovalItem, int> approvalItemRepository,
+    IWorkflowDefinitionStore workflowDefinitionStore,
+    IWorkflowRuntime workflowRuntime)
     : DomainService, IApprovalItemManager
 {
-    private const string WorkflowBlueprintTag = "ApprovalItem";
-
+    private const string WorkflowDefinitionName = "Ping";
 
     /// <summary>
     /// Updates the status of the ApprovalItem
@@ -47,28 +55,50 @@ public class ApprovalItemManager(
     /// <summary>
     /// Initiates a workflow for the ApprovalItem
     /// </summary>
-    public Task StartWorkflow(int id)
+    public async Task StartWorkflow(int id)
     {
-        return Task.CompletedTask;
-        // var item = await approvalItemRepository.FindAsync(id);
-        // if (item == null)
-        // {
-        //     throw new UserFriendlyException($"Could not find approval item with id {id}");
-        // }
-        //
-        // var workflowBlueprint =
-        //     await workflowRegistry.FindByTagAsync(WorkflowBlueprintTag, VersionOptions.Published);
-        //
-        // if (workflowBlueprint == null)
-        // {
-        //     throw new UserFriendlyException($"Could not find workflow blueprint with tag {WorkflowBlueprintTag}");
-        // }
-        //
-        // // Dispatch the workflow.
-        // await workflowDispatcher.DispatchAsync(new ExecuteWorkflowDefinitionRequest(
-        //     workflowBlueprint.Id,
-        //     CorrelationId: item.Id.ToString(),
-        //     Input: new WorkflowInput(item.Id.ToString())));
+        var item = await approvalItemRepository.FindAsync(id);
+        if (item == null)
+        {
+            throw new UserFriendlyException($"Could not find approval item with id {id}");
+        }
+
+        var workflowDefinition = await FindWorkflowDefinition();
+
+        // Dispatch the workflow.
+        await InvokeWorkflow(item, workflowDefinition);
+    }
+
+
+    private async Task InvokeWorkflow(ApprovalItem item, WorkflowDefinition? workflowDefinition)
+    {
+        var startOptions = new StartWorkflowRuntimeOptions()
+        {
+            CorrelationId = item.Id.ToString(),
+            Input = new Dictionary<string, object>()
+            {
+                ["item.Id"] = item.Id
+            },
+            VersionOptions = VersionOptions.Published
+        };
+        await workflowRuntime.StartWorkflowAsync(workflowDefinition.DefinitionId, startOptions);
+    }
+
+    private async Task<WorkflowDefinition?> FindWorkflowDefinition()
+    {
+        var filter = new WorkflowDefinitionFilter()
+        {
+            Name = WorkflowDefinitionName,
+            VersionOptions = VersionOptions.Published
+        };
+        var workflowBlueprint = await workflowDefinitionStore.FindAsync(filter);
+
+        if (workflowBlueprint == null)
+        {
+            throw new UserFriendlyException($"Could not find workflow blueprint with tag {WorkflowDefinitionName}");
+        }
+
+        return workflowBlueprint;
     }
 
     /// <summary>
