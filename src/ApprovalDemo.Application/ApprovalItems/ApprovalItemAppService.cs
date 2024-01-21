@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ApprovalDemo.Workflows;
+using Elsa.Workflows.Management.Entities;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -20,6 +23,13 @@ public class ApprovalItemAppService(IRepository<ApprovalItem, int> repository, I
     public Task ApplyTransition(int id, string transition)
     {
         return approvalItemManager.ApplyTransition(id, transition, CurrentUser.UserName!);
+    }
+
+    public async Task<List<WorkflowVersionDto>> GetWorkflowVersions()
+    {
+        var definitions = await approvalItemManager.GetWorkflowVersions();
+        var result = ObjectMapper.Map<List<WorkflowDefinition>, List<WorkflowVersionDto>>(definitions);
+        return result;
     }
 
     public override async Task<ApprovalItemDto> GetAsync(int id)

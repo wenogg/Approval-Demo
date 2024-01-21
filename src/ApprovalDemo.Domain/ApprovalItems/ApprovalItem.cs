@@ -14,4 +14,6 @@ public class ApprovalItem : FullAuditedAggregateRoot<int>
     public ApprovalStatusType Status { get; set; } = ApprovalStatusType.New;
 
     public bool IsHot { get; set; }
+
+    public int WorkflowDefinitionVersion { get; set; }
 }

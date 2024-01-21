@@ -25,6 +25,8 @@ public interface IApprovalItemManager : IDomainService
     Task<List<string>> GetAvailableActions(int id);
 
     public Task ApplyTransition(int id, string action, string userName);
+
+    public Task<List<WorkflowDefinition>> GetWorkflowVersions();
 }
 
 public class ApprovalItemManager(
@@ -63,7 +65,7 @@ public class ApprovalItemManager(
             throw new UserFriendlyException($"Could not find approval item with id {id}");
         }
 
-        var workflowDefinition = await FindWorkflowDefinition(WorkflowDefinitionName);
+        var workflowDefinition = await FindWorkflowDefinition(WorkflowDefinitionName, item.WorkflowDefinitionVersion);
         if (workflowDefinition == null)
         {
             throw new UserFriendlyException($"Could not find workflow definition {WorkflowDefinitionName}");
@@ -86,17 +88,17 @@ public class ApprovalItemManager(
             {
                 ["item.Id"] = item.Id
             },
-            VersionOptions = VersionOptions.Published
+            VersionOptions = VersionOptions.SpecificVersion(workflowDefinition.Version)
         };
         await workflowRuntime.StartWorkflowAsync(workflowDefinition.DefinitionId, startOptions);
     }
 
-    private async Task<WorkflowDefinition?> FindWorkflowDefinition(string workflowName)
+    private async Task<WorkflowDefinition?> FindWorkflowDefinition(string workflowName, int version)
     {
         var filter = new WorkflowDefinitionFilter()
         {
             Name = workflowName,
-            VersionOptions = VersionOptions.Published
+            VersionOptions = VersionOptions.SpecificVersion(version)
         };
         var workflowBlueprint = await workflowDefinitionStore.FindAsync(filter);
 
@@ -185,5 +187,16 @@ public class ApprovalItemManager(
             Input = inputPayload
         };
         await workflowRuntime.ResumeWorkflowAsync(workflowInstance.Id, options);
+    }
+
+    public async Task<List<WorkflowDefinition>> GetWorkflowVersions()
+    {
+        var filter = new WorkflowDefinitionFilter()
+        {
+            Name = WorkflowDefinitionName,
+            VersionOptions = VersionOptions.All
+        };
+        var items = await workflowDefinitionStore.FindManyAsync(filter);
+        return items.OrderByDescending(s => s.Version).ToList();
     }
 }

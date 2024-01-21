@@ -12,4 +12,9 @@ public class UpdateApprovalItemDto
     public string Description { get; set; }
 
     public bool IsHot { get; set; }
+
+    [Required]
+    public int WorkflowDefinitionVersion { get; set; }
+
+    public ApprovalStatusType Status { get; set; }
 }

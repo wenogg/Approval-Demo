@@ -1,6 +1,8 @@
 ﻿using ApprovalDemo.ApprovalItems;
 using ApprovalDemo.Orders;
+using ApprovalDemo.Workflows;
 using AutoMapper;
+using Elsa.Workflows.Management.Entities;
 
 namespace ApprovalDemo;
 
@@ -20,6 +22,8 @@ public class ApprovalDemoAutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<OrderDto, UpdateOrderDto>();
-        CreateMap<UpdateOrderDto, Order>();
+        CreateMap<UpdateOrderDto, Order>()
+            .ForMember(dest => dest.Status, opt => opt.Ignore());
+        CreateMap<WorkflowDefinition, WorkflowVersionDto>();
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ApprovalDemo.Workflows;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
@@ -9,4 +11,6 @@ public interface
     UpdateApprovalItemDto>
 {
     public Task ApplyTransition(int id, string transition);
+
+    public Task<List<WorkflowVersionDto>> GetWorkflowVersions();
 }

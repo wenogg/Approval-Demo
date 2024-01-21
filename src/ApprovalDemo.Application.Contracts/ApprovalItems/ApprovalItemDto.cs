@@ -13,6 +13,8 @@ public class ApprovalItemDto : AuditedEntityDto<int>
 
     public ApprovalStatusType Status { get; set; }
 
+    public int WorkflowDefinitionVersion { get; set; }
+
     public List<string> Actions { get; set; } = [];
 
     public List<JournalEntryDto> Journal { get; set; } = [];

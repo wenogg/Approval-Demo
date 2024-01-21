@@ -1,9 +1,11 @@
 ﻿@page "/approval-items"
+@using Blazorise.Components
 @using Volo.Abp.Application.Dtos
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.AspNetCore.Components.Web
 @using ApprovalDemo.Localization
 @using ApprovalDemo.ApprovalItems
+@using ApprovalDemo.Workflows
 
 @inject IStringLocalizer<ApprovalDemoResource> L
 @inherits AbpCrudPageBase<IApprovalItemAppService, ApprovalItemDto, int, PagedAndSortedResultRequestDto, ApprovalDemo.ApprovalItems.UpdateApprovalItemDto>
@@ -16,8 +18,7 @@
                 <h2>@L["Approval Items"]</h2>
             </Column>
             <Column ColumnSize="ColumnSize.IsAuto">
-                <Button Color="Color.Primary"
-                        Clicked="OpenCreateModalAsync">Add item</Button>
+                <Button Color="Color.Primary" Clicked="OpenCreateModalAsync">Add item</Button>
             </Column>
         </Row>
     </CardHeader>
@@ -67,6 +68,10 @@
                     <DisplayTemplate>
                         @context.Status.ToString()
                     </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="ApprovalItemDto"
+                                Field="@nameof(ApprovalItemDto.WorkflowDefinitionVersion)"
+                                Caption="Workflow Version">
                 </DataGridColumn>
                 <DataGridColumn TItem="ApprovalItemDto"
                                 Field="@nameof(ApprovalItemDto.CreationTime)"
@@ -119,6 +124,22 @@
                         </Field>
                     </Validation>
 
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Workflow Definition Version</FieldLabel>
+                            <SelectList TItem="WorkflowVersionDto"
+                                        TValue="int"
+                                        DefaultItemText=""
+                                        @bind-SelectedValue="NewEntity.WorkflowDefinitionVersion"
+                                        Data="@WorkflowVersions"
+                                        TextField="@(item => $"{item.Name} - Version {item.Version} (Published: {item.IsPublished})")"
+                                        ValueField="@(item => item.Version)">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </SelectList>
+                        </Field>
+                    </Validation>
                 </Validations>
             </ModalBody>
             <ModalFooter>
@@ -167,6 +188,29 @@
                         <Field>
                             <FieldLabel>Is Hot</FieldLabel>
                             <Switch TValue="bool" @bind-Checked="EditingEntity.IsHot" />
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>Workflow Definition Version</FieldLabel>
+                            @if (EditingEntity.Status != ApprovalStatusType.Approved && EditingEntity.Status != ApprovalStatusType.Cancelled)
+                            {
+                                <SelectList TItem="WorkflowVersionDto"
+                                            TValue="int"
+                                            DefaultItemText=""
+                                            @bind-SelectedValue="EditingEntity.WorkflowDefinitionVersion"
+                                            Data="@WorkflowVersions"
+                                            TextField="@(item => $"{item.Name} - Version {item.Version} (Published: {item.IsPublished})")"
+                                            ValueField="@(item => item.Version)">
+                                    <Feedback>
+                                        <ValidationError/>
+                                    </Feedback>
+                                </SelectList>
+                            }
+                            else
+                            {
+                                @EditingEntity.Status.ToString()
+                            }
                         </Field>
                     </Validation>
                 </Validations>
