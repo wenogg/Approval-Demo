@@ -19,14 +19,13 @@ public class OrderAppService(IRepository<Order, int> repository, IOrderManager o
     public override async Task<OrderDto> CreateAsync(UpdateOrderDto input)
     {
         var orderDto = await base.CreateAsync(input);
-        // await orderManager.StartWorkflow(orderDto.Id);
+        await orderManager.StartWorkflow(orderDto.Id);
         return orderDto;
     }
 
     public Task ApplyTransition(int id, string transition, string userName)
     {
-        return Task.CompletedTask;
-        // return orderManager.ApplyTransition(id, transition, userName);
+        return orderManager.ApplyTransition(id, transition, userName);
     }
 
     public override async Task<OrderDto> GetAsync(int id)
@@ -36,7 +35,7 @@ public class OrderAppService(IRepository<Order, int> repository, IOrderManager o
         var entity = await GetEntityByIdAsync(id);
 
         var item = await MapToGetOutputDtoAsync(entity);
-        // item.Actions = await orderManager.GetAvailableActions(id);
+        item.Actions = await orderManager.GetAvailableActions(id);
         // var entries = await orderManager.GetJournalEntries(id);
         // item.Journal = ObjectMapper.Map<List<WorkflowExecutionLogRecord>, List<JournalEntryDto>>(entries);
         return item;

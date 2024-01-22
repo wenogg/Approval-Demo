@@ -1,464 +1,649 @@
 {
-  "$id": "1",
-  "definitionId": "526046342a3e4ac4b29eb9cd5e1b64ce",
-  "versionId": "89a22180fa9a4318aff3d4ed0ecdb553",
+  "id": "504acaaa4d87cc2c",
+  "definitionId": "23c253cec175fb66",
   "name": "OrderWorkflow",
-  "displayName": "Order Workflow",
-  "version": 3,
-  "variables": {
-    "$id": "2",
-    "data": {}
-  },
-  "customAttributes": {
-    "$id": "3",
-    "data": {}
-  },
-  "contextOptions": {
-    "$id": "4",
-    "contextType": "ApprovalDemo.Orders.Order, ApprovalDemo.Domain",
-    "contextFidelity": "Burst"
-  },
-  "isSingleton": false,
-  "persistenceBehavior": "WorkflowBurst",
-  "deleteCompletedInstances": false,
-  "isPublished": true,
+  "description": "Order Workflow",
+  "createdAt": "2024-01-22T03:46:37.9298292+00:00",
+  "version": 2,
+  "toolVersion": "3.0.0.0",
+  "variables": [],
+  "inputs": [],
+  "outputs": [],
+  "outcomes": [],
+  "customProperties": {},
+  "isReadonly": false,
   "isLatest": true,
-  "tag": "Order",
-  "createdAt": "2024-01-15T21:59:40.2860066Z",
-  "activities": [
-    {
-      "$id": "5",
-      "activityId": "a9c642cd-0001-45e8-b000-9d697a1d86b2",
-      "type": "WriteLine",
-      "name": "StartWorkflowOutput",
-      "displayName": "Initiate Order",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "6",
-          "name": "Text",
-          "syntax": "Liquid",
-          "expressions": {
-            "$id": "7",
-            "Liquid": "Starting order item workflow ({{CorrelationId}})"
-          }
-        }
-      ],
-      "propertyStorageProviders": {
-        "$id": "8"
-      }
+  "isPublished": true,
+  "options": {
+    "autoUpdateConsumingWorkflows": false
+  },
+  "root": {
+    "type": "Elsa.Flowchart",
+    "version": 1,
+    "id": "9bfc5baf7543e9e3",
+    "nodeId": "Workflow1:9bfc5baf7543e9e3",
+    "metadata": {},
+    "customProperties": {
+      "source": "FlowchartJsonConverter.cs:45",
+      "notFoundConnections": [],
+      "canStartWorkflow": false,
+      "runAsynchronously": false
     },
-    {
-      "$id": "9",
-      "activityId": "cb984a14-7ef4-4806-bb3c-e6db863f0d47",
-      "type": "AuthorizedUserTask",
-      "name": "PendingSubmission",
-      "displayName": "Creating Order",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "10",
-          "name": "Permission",
-          "expressions": {
-            "$id": "11",
-            "Literal": "ApprovalDemo.Orders.Submit"
+    "activities": [
+      {
+        "id": "5441b9aa365b3d3e",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:5441b9aa365b3d3e",
+        "name": "StartActivity",
+        "type": "Elsa.Start",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 85.91435241699219,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 101.82870483398438,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Start"
+        }
+      },
+      {
+        "orderId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
           }
         },
-        {
-          "$id": "12",
-          "name": "Actions",
-          "expressions": {
-            "$id": "13",
-            "Json": "[\"Submit Order\",\"Cancel Order\"]"
-          }
-        }
-      ],
-      "propertyStorageProviders": {
-        "$id": "14",
-        "Permission": "WorkflowInstance"
-      }
-    },
-    {
-      "$id": "15",
-      "activityId": "00c5f9bf-68b9-4fae-b4f2-ada38b77f3ec",
-      "type": "If",
-      "displayName": "Hot",
-      "persistWorkflow": false,
-      "loadWorkflowContext": true,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "16",
-          "name": "Condition",
-          "syntax": "JavaScript",
-          "expressions": {
-            "$id": "17",
-            "JavaScript": "workflowContext.IsHot"
-          }
-        }
-      ],
-      "propertyStorageProviders": {
-        "$id": "18"
-      }
-    },
-    {
-      "$id": "19",
-      "activityId": "bdc351ce-85e1-4a84-8920-cff9e6d7cbb3",
-      "type": "SetOrderStatusActivity",
-      "name": "PreparingOrder",
-      "displayName": "Set Order Status to Preparing",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "20",
-          "name": "OrderId",
-          "syntax": "JavaScript",
-          "expressions": {
-            "$id": "21",
-            "JavaScript": "correlationId"
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "New"
           }
         },
-        {
-          "$id": "22",
-          "name": "Status",
-          "expressions": {
-            "$id": "23",
-            "Literal": "Preparing"
-          }
+        "newStatus": null,
+        "item": null,
+        "id": "e58c09ccab528e81",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:e58c09ccab528e81",
+        "name": "SetOrderStatusNew",
+        "type": "ApprovalDemo.Orders.Workflow.SetOrderStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 345.15625762939453,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 206.6551055908203,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Set Order Status New"
         }
-      ],
-      "propertyStorageProviders": {
-        "$id": "24"
-      }
-    },
-    {
-      "$id": "25",
-      "activityId": "ac342f24-46c8-4d5a-9ee5-e5417d5e7503",
-      "type": "AuthorizedUserTask",
-      "name": "PendingPreparation",
-      "displayName": "Preparing Order",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "26",
-          "name": "Permission",
-          "expressions": {
-            "$id": "27",
-            "Literal": "ApprovalDemo.Orders.Prepare"
+      },
+      {
+        "orderId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
           }
         },
-        {
-          "$id": "28",
-          "name": "Actions",
-          "expressions": {
-            "$id": "29",
-            "Json": "[\"Mark Prepared\",\"Return for correction\"]"
-          }
-        }
-      ],
-      "propertyStorageProviders": {
-        "$id": "30"
-      }
-    },
-    {
-      "$id": "31",
-      "activityId": "a72fbdeb-d30b-4b25-b512-ce5f81a341e4",
-      "type": "SetOrderStatusActivity",
-      "name": "SetOrderToShipping",
-      "displayName": "Set Order Status to Shipping",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "32",
-          "name": "OrderId",
-          "syntax": "JavaScript",
-          "expressions": {
-            "$id": "33",
-            "JavaScript": "correlationId"
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Cancelled"
           }
         },
-        {
-          "$id": "34",
-          "name": "Status",
-          "expressions": {
-            "$id": "35",
-            "Literal": "Shipping"
-          }
+        "newStatus": null,
+        "item": null,
+        "id": "f5c538d186c706f7",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:f5c538d186c706f7",
+        "name": "SetOrderStatusCancelled",
+        "type": "ApprovalDemo.Orders.Workflow.SetOrderStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 969.6470184326172,
+              "y": 39.728010177612305
+            },
+            "size": {
+              "width": 224.5023193359375,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Set Order Status Cancelled"
         }
-      ],
-      "propertyStorageProviders": {
-        "$id": "36"
-      }
-    },
-    {
-      "$id": "37",
-      "activityId": "4dbc30b6-00a3-447a-9175-8b8a1a1882a6",
-      "type": "AuthorizedUserTask",
-      "name": "PendingShipping",
-      "displayName": "Pending Shipping",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "38",
-          "name": "Permission",
-          "expressions": {
-            "$id": "39",
-            "Literal": "ApprovalDemo.Orders.Ship"
+      },
+      {
+        "text": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Order has been cancelled"
           }
         },
-        {
-          "$id": "40",
-          "name": "Actions",
-          "expressions": {
-            "$id": "41",
-            "Json": "[\"Ship Order\"]"
-          }
+        "id": "a313d5342fe9e2b6",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:a313d5342fe9e2b6",
+        "name": "WriteOrderCancelled",
+        "type": "Elsa.WriteLine",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 1311.7824401855469,
+              "y": 39.728010177612305
+            },
+            "size": {
+              "width": 249.76852416992188,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Order has been cancelled"
         }
-      ],
-      "propertyStorageProviders": {
-        "$id": "42"
-      }
-    },
-    {
-      "$id": "43",
-      "activityId": "3fe3d4f0-5fe3-4da4-8100-7e329deace6e",
-      "type": "SetOrderStatusActivity",
-      "name": "SetOrderToShipped",
-      "displayName": "Set Order Status to Shipp",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "44",
-          "name": "OrderId",
-          "syntax": "JavaScript",
-          "expressions": {
-            "$id": "45",
-            "JavaScript": "correlationId"
+      },
+      {
+        "permission": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "ApprovalDemo.Orders.Submit"
           }
         },
-        {
-          "$id": "46",
-          "name": "Status",
-          "expressions": {
-            "$id": "47",
-            "Literal": "Shipped"
-          }
-        }
-      ],
-      "propertyStorageProviders": {
-        "$id": "48"
-      }
-    },
-    {
-      "$id": "49",
-      "activityId": "d7ea62e5-6bc8-4cec-9fa9-fdd2733c91b4",
-      "type": "AuthorizedUserTask",
-      "displayName": "Authorized User Task",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "50",
-          "name": "Permission",
-          "expressions": {
-            "$id": "51",
-            "Literal": "ApprovalDemo.Orders.Receive"
+        "actions": {
+          "typeName": "String[]",
+          "expression": {
+            "type": "Object",
+            "value": "[\u0022Submit Order\u0022,\u0022Cancel Order\u0022]"
           }
         },
-        {
-          "$id": "52",
-          "name": "Actions",
-          "expressions": {
-            "$id": "53",
-            "Json": "[\"Receive Order\"]"
-          }
+        "result": null,
+        "id": "183981b50040bea1",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:183981b50040bea1",
+        "name": "PendingCreateOrder",
+        "type": "ApprovalDemo.ApprovalItems.Workflow.AuthorizedUserTask",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": true,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 652.9398345947266,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 198.91204833984375,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Pending Order Creation"
         }
-      ],
-      "propertyStorageProviders": {
-        "$id": "54"
-      }
-    },
-    {
-      "$id": "55",
-      "activityId": "43e6cfdf-b6dd-4b85-b777-9b6f5bb961cc",
-      "type": "SetOrderStatusActivity",
-      "name": "SetOrderToDelivered",
-      "displayName": "Set Order Status to Delivered",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "56",
-          "name": "OrderId",
-          "syntax": "JavaScript",
-          "expressions": {
-            "$id": "57",
-            "JavaScript": "correlationId"
+      },
+      {
+        "permission": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "ApprovalDemo.Orders.Prepare"
           }
         },
-        {
-          "$id": "58",
-          "name": "Status",
-          "expressions": {
-            "$id": "59",
-            "Literal": "Delivered"
-          }
-        }
-      ],
-      "propertyStorageProviders": {
-        "$id": "60"
-      }
-    },
-    {
-      "$id": "61",
-      "activityId": "f49eb6b4-a850-4f39-865c-e9aa9450f109",
-      "type": "SetOrderStatusActivity",
-      "name": "SetOrderCancelled",
-      "displayName": "Set Order Status to Cancelled",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "62",
-          "name": "OrderId",
-          "syntax": "JavaScript",
-          "expressions": {
-            "$id": "63",
-            "JavaScript": "correlationId"
+        "actions": {
+          "typeName": "String[]",
+          "expression": {
+            "type": "Object",
+            "value": "[\u0022Mark Prepared\u0022,\u0022Return for correction\u0022]"
           }
         },
-        {
-          "$id": "64",
-          "name": "Status",
-          "expressions": {
-            "$id": "65",
-            "Literal": "Cancelled"
-          }
+        "result": null,
+        "id": "87dd9305ff0694de",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:87dd9305ff0694de",
+        "name": "PendingOrderPreparation",
+        "type": "ApprovalDemo.ApprovalItems.Workflow.AuthorizedUserTask",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 1311.7824401855469,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 144.6064910888672,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Preparing Order"
         }
-      ],
-      "propertyStorageProviders": {
-        "$id": "66"
-      }
-    },
-    {
-      "$id": "67",
-      "activityId": "eec8832c-592a-4370-89c4-0235298096c8",
-      "type": "WriteLine",
-      "displayName": "Write Line",
-      "persistWorkflow": false,
-      "loadWorkflowContext": false,
-      "saveWorkflowContext": false,
-      "properties": [
-        {
-          "$id": "68",
-          "name": "Text",
-          "expressions": {
-            "$id": "69",
-            "Literal": "Order cancelled"
+      },
+      {
+        "orderId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
           }
+        },
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Preparing"
+          }
+        },
+        "newStatus": null,
+        "item": null,
+        "id": "6d1081820a122c41",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:6d1081820a122c41",
+        "name": "SetOrderStatusPreparing",
+        "type": "ApprovalDemo.Orders.Workflow.SetOrderStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 969.6470184326172,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 223.067138671875,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Set Order Status Preparing"
         }
-      ],
-      "propertyStorageProviders": {
-        "$id": "70"
+      },
+      {
+        "orderId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
+          }
+        },
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Shipping"
+          }
+        },
+        "newStatus": null,
+        "item": null,
+        "id": "2170a412ff164d34",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:2170a412ff164d34",
+        "name": "SetOrderStatusShipping",
+        "type": "ApprovalDemo.Orders.Workflow.SetOrderStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 1649.7280502319336,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 216.12269592285156,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Set Order Status Shipping"
+        }
+      },
+      {
+        "permission": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "ApprovalDemo.Orders.Receive"
+          }
+        },
+        "actions": {
+          "typeName": "String[]",
+          "expression": {
+            "type": "Object",
+            "value": "[\u0022Receive Order\u0022]"
+          }
+        },
+        "result": null,
+        "id": "c470a9be738010a7",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:c470a9be738010a7",
+        "name": "PendingDelivery",
+        "type": "ApprovalDemo.ApprovalItems.Workflow.AuthorizedUserTask",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 2516.851921081543,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 150.94908142089844,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Pending Delivery"
+        }
+      },
+      {
+        "orderId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
+          }
+        },
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Shipped"
+          }
+        },
+        "newStatus": null,
+        "item": null,
+        "id": "897c721b8e58de43",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:897c721b8e58de43",
+        "name": "SetOrderStatusShipped",
+        "type": "ApprovalDemo.Orders.Workflow.SetOrderStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 2230.48038482666,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 211.7939910888672,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Set Order Status Shipped"
+        }
+      },
+      {
+        "orderId": {
+          "typeName": "String",
+          "expression": {
+            "type": "CSharp",
+            "value": "CorrelationId"
+          }
+        },
+        "status": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Delivered"
+          }
+        },
+        "newStatus": null,
+        "item": null,
+        "id": "5361f06983f76a70",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:5361f06983f76a70",
+        "name": "SetOrderStatusDelivered",
+        "type": "ApprovalDemo.Orders.Workflow.SetOrderStatusActivity",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 2782.0081787109375,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 169.36343383789062,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Set Order Delivered"
+        }
+      },
+      {
+        "text": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Order has been delivered"
+          }
+        },
+        "id": "26cc953886bc6d04",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:26cc953886bc6d04",
+        "name": "WriteDelivered",
+        "type": "Elsa.WriteLine",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 3060.885498046875,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 178.39120483398438,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Order complete"
+        }
+      },
+      {
+        "permission": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "ApprovalDemo.Orders.Ship"
+          }
+        },
+        "actions": {
+          "typeName": "String[]",
+          "expression": {
+            "type": "Object",
+            "value": "[\u0022Ship order\u0022]"
+          }
+        },
+        "result": null,
+        "id": "e041e60d0923ebbe",
+        "nodeId": "Workflow1:9bfc5baf7543e9e3:e041e60d0923ebbe",
+        "name": "PendingShipping",
+        "type": "ApprovalDemo.ApprovalItems.Workflow.AuthorizedUserTask",
+        "version": 1,
+        "customProperties": {
+          "canStartWorkflow": false,
+          "runAsynchronously": false
+        },
+        "metadata": {
+          "designer": {
+            "position": {
+              "x": 1941.186393737793,
+              "y": 134.1840305328369
+            },
+            "size": {
+              "width": 156.7939910888672,
+              "height": 49.45602035522461
+            }
+          },
+          "displayText": "Pending Shipping"
+        }
       }
-    }
-  ],
-  "connections": [
-    {
-      "$id": "71",
-      "sourceActivityId": "a9c642cd-0001-45e8-b000-9d697a1d86b2",
-      "targetActivityId": "cb984a14-7ef4-4806-bb3c-e6db863f0d47",
-      "outcome": "Done"
-    },
-    {
-      "$id": "72",
-      "sourceActivityId": "cb984a14-7ef4-4806-bb3c-e6db863f0d47",
-      "targetActivityId": "00c5f9bf-68b9-4fae-b4f2-ada38b77f3ec",
-      "outcome": "Submit Order"
-    },
-    {
-      "$id": "73",
-      "sourceActivityId": "00c5f9bf-68b9-4fae-b4f2-ada38b77f3ec",
-      "targetActivityId": "bdc351ce-85e1-4a84-8920-cff9e6d7cbb3",
-      "outcome": "False"
-    },
-    {
-      "$id": "74",
-      "sourceActivityId": "bdc351ce-85e1-4a84-8920-cff9e6d7cbb3",
-      "targetActivityId": "ac342f24-46c8-4d5a-9ee5-e5417d5e7503",
-      "outcome": "Done"
-    },
-    {
-      "$id": "75",
-      "sourceActivityId": "ac342f24-46c8-4d5a-9ee5-e5417d5e7503",
-      "targetActivityId": "a72fbdeb-d30b-4b25-b512-ce5f81a341e4",
-      "outcome": "Mark Prepared"
-    },
-    {
-      "$id": "76",
-      "sourceActivityId": "a72fbdeb-d30b-4b25-b512-ce5f81a341e4",
-      "targetActivityId": "4dbc30b6-00a3-447a-9175-8b8a1a1882a6",
-      "outcome": "Done"
-    },
-    {
-      "$id": "77",
-      "sourceActivityId": "4dbc30b6-00a3-447a-9175-8b8a1a1882a6",
-      "targetActivityId": "3fe3d4f0-5fe3-4da4-8100-7e329deace6e",
-      "outcome": "Ship Order"
-    },
-    {
-      "$id": "78",
-      "sourceActivityId": "3fe3d4f0-5fe3-4da4-8100-7e329deace6e",
-      "targetActivityId": "d7ea62e5-6bc8-4cec-9fa9-fdd2733c91b4",
-      "outcome": "Done"
-    },
-    {
-      "$id": "79",
-      "sourceActivityId": "d7ea62e5-6bc8-4cec-9fa9-fdd2733c91b4",
-      "targetActivityId": "43e6cfdf-b6dd-4b85-b777-9b6f5bb961cc",
-      "outcome": "Receive Order"
-    },
-    {
-      "$id": "80",
-      "sourceActivityId": "00c5f9bf-68b9-4fae-b4f2-ada38b77f3ec",
-      "targetActivityId": "a72fbdeb-d30b-4b25-b512-ce5f81a341e4",
-      "outcome": "True"
-    },
-    {
-      "$id": "81",
-      "sourceActivityId": "cb984a14-7ef4-4806-bb3c-e6db863f0d47",
-      "targetActivityId": "f49eb6b4-a850-4f39-865c-e9aa9450f109",
-      "outcome": "Cancel Order"
-    },
-    {
-      "$id": "82",
-      "sourceActivityId": "f49eb6b4-a850-4f39-865c-e9aa9450f109",
-      "targetActivityId": "eec8832c-592a-4370-89c4-0235298096c8",
-      "outcome": "Done"
-    },
-    {
-      "$id": "83",
-      "sourceActivityId": "ac342f24-46c8-4d5a-9ee5-e5417d5e7503",
-      "targetActivityId": "cb984a14-7ef4-4806-bb3c-e6db863f0d47",
-      "outcome": "Return for correction"
-    }
-  ],
-  "id": "89a22180fa9a4318aff3d4ed0ecdb553"
+    ],
+    "connections": [
+      {
+        "source": {
+          "activity": "e041e60d0923ebbe",
+          "port": "Ship order"
+        },
+        "target": {
+          "activity": "897c721b8e58de43",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "897c721b8e58de43",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "c470a9be738010a7",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "c470a9be738010a7",
+          "port": "Receive Order"
+        },
+        "target": {
+          "activity": "5361f06983f76a70",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "5361f06983f76a70",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "26cc953886bc6d04",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "183981b50040bea1",
+          "port": "Submit Order"
+        },
+        "target": {
+          "activity": "6d1081820a122c41",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "183981b50040bea1",
+          "port": "Cancel Order"
+        },
+        "target": {
+          "activity": "f5c538d186c706f7",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "f5c538d186c706f7",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "a313d5342fe9e2b6",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "6d1081820a122c41",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "87dd9305ff0694de",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "87dd9305ff0694de",
+          "port": "Mark Prepared"
+        },
+        "target": {
+          "activity": "2170a412ff164d34",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "87dd9305ff0694de",
+          "port": "Return for correction"
+        },
+        "target": {
+          "activity": "183981b50040bea1",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "2170a412ff164d34",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "e041e60d0923ebbe",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "e58c09ccab528e81",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "183981b50040bea1",
+          "port": "In"
+        }
+      },
+      {
+        "source": {
+          "activity": "5441b9aa365b3d3e",
+          "port": "Done"
+        },
+        "target": {
+          "activity": "e58c09ccab528e81",
+          "port": "In"
+        }
+      }
+    ]
+  }
 }
