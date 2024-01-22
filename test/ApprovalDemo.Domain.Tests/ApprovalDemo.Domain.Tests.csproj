@@ -9,12 +9,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Elsa.Testing.Shared" Version="3.0.3" />
+    <PackageReference Include="Elsa.Workflows.Core" Version="3.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.6.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ApprovalDemo.Domain\ApprovalDemo.Domain.csproj" />
     <ProjectReference Include="..\ApprovalDemo.TestBase\ApprovalDemo.TestBase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Orders\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\src\ApprovalDemo.Domain\Orders\Workflow\order-workflow.json">
+      <Link>Workflow\Workflows\order-workflow.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
