@@ -1,5 +1,6 @@
 ﻿@page "/orders/{OrderId}"
 @using ApprovalDemo.ApprovalItems
+@using ApprovalDemo.Orders
 @inherits ApprovalDemoComponentBase
 
 <PageProgress Visible="Loading" Color="Color.Info" />
@@ -58,5 +59,16 @@
         {
             <Button Color="Color.Primary" Margin="Margin.Is1.FromEnd" Clicked="@(() => SendUserAction(action))">@action</Button>
         }
+
+        @if (CanReset)
+        {
+            <Button Color="Color.Primary" Margin="Margin.Is1.FromEnd" Clicked="@(() => ResetWorkflow())">Reset workflow</Button>
+        }
+
+        @if (CanDetach)
+        {
+            <Button Color="Color.Primary" Margin="Margin.Is1.FromEnd" Clicked="@(() => DetachWorkflow())">Detach workflow</Button>
+        }
+
     </CardFooter>
 </Card>

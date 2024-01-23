@@ -15,9 +15,12 @@ using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
 using ApprovalDemo.Workflow.Activities;
+using ApprovalDemo.Workflow.Alterations;
 using Elsa;
+using Elsa.Alterations.Extensions;
 using Elsa.Api.Client.HttpMessageHandlers;
 using Elsa.EntityFrameworkCore.Extensions;
+using Elsa.EntityFrameworkCore.Modules.Alterations;
 using Elsa.EntityFrameworkCore.Modules.Management;
 using Elsa.EntityFrameworkCore.Modules.Runtime;
 using Elsa.Extensions;
@@ -167,6 +170,17 @@ public class ApprovalDemoBlazorModule : AbpModule
                 opt.RunMigrations = true;
                 opt.UseSqlServer(connection!);
             }));
+
+            elsa.UseAlterations(alterations =>
+            {
+                alterations.UseEntityFrameworkCore(opt =>
+                {
+                    opt.RunMigrations = true;
+                    opt.UseSqlServer(connection!);
+                });
+
+                alterations.AddAlteration<RemoveBookmarksAlteration, RemoveBookmarksAlterationHandler>();
+            });
 
             // Default Identity features for authentication/authorization.
             // elsa.UseIdentity(identity =>

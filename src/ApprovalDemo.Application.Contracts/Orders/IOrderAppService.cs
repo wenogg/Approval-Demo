@@ -8,4 +8,9 @@ public interface IOrderAppService : ICrudAppService<OrderDto, int, PagedAndSorte
     UpdateOrderDto>
 {
     public Task ApplyTransition(int id, string transition, string userName);
+
+    public Task ResetWorkflow(int id);
+
+    public Task DetachWorkflow(int id);
+
 }

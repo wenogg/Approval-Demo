@@ -3,6 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApprovalDemo.Workflow;
 using ApprovalDemo.Workflow.Activities;
+using ApprovalDemo.Workflow.Alterations;
+using Elsa.Alterations.AlterationHandlers;
+using Elsa.Alterations.AlterationTypes;
+using Elsa.Alterations.Core.Contracts;
 using Elsa.Common.Models;
 using Elsa.Workflows.Management.Contracts;
 using Elsa.Workflows.Management.Entities;
@@ -28,6 +32,10 @@ public interface IOrderManager : IDomainService
 
     public Task ApplyTransition(int id, string action, string userName);
 
+    public Task ResetWorkflow(int id);
+
+    public Task DetachWorkflow(int id);
+
     // Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id);
 }
 
@@ -37,7 +45,8 @@ public class OrderManager(
     IWorkflowDefinitionStore workflowDefinitionStore,
     IWorkflowRuntime workflowRuntime,
     IWorkflowInstanceStore workflowInstanceStore,
-    IBookmarkStore bookmarkStore)
+    IBookmarkStore bookmarkStore,
+    IAlterationRunner alterationRunner)
     : DomainService, IOrderManager
 {
     private const string WorkflowDefinitionName = "OrderWorkflow";
@@ -175,23 +184,6 @@ public class OrderManager(
         await workflowRuntime.ResumeWorkflowAsync(workflowInstance.Id, options);
     }
 
-    /// <summary>
-    /// Returns the workflow journal entries for the Order
-    /// </summary>
-    // public async Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id)
-    // {
-    //     var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
-    //     if (workflowInstance == null)
-    //     {
-    //         return [];
-    //     }
-    //
-    //     var specification = new WorkflowInstanceIdSpecification(workflowInstance.Id);
-    //     var orderBy = OrderBySpecification.OrderBy<WorkflowExecutionLogRecord>(x => x.Timestamp);
-    //     var records = (await workflowExecutionLogStore.FindManyAsync(specification, orderBy)).ToList();
-    //     return records;
-    // }
-
     private async Task<WorkflowDefinition?> FindWorkflowDefinition(string workflowName)
     {
         var filter = new WorkflowDefinitionFilter()
@@ -223,4 +215,71 @@ public class OrderManager(
         var bookmarks = await bookmarkStore.FindManyAsync(bookmarkFiler);
         return bookmarks;
     }
+
+    /// <summary>
+    /// Resets the workflow to the initial state
+    /// </summary>
+    /// <param name="id"></param>
+    public async Task ResetWorkflow(int id)
+    {
+        await ScheduleActivity(id, "e58c09ccab528e81");
+    }
+
+    /// <summary>
+    /// Puts the workflow in a detached state to simulate an update to a workflow alteration that removes a state
+    /// </summary>
+    /// <param name="id"></param>
+    public async Task DetachWorkflow(int id)
+    {
+        await ScheduleActivity(id, "67b65016a65878e0");
+    }
+
+    /// <summary>
+    /// Submits an alteration plan to move the workflow to a specific activity, and cancel any open bookmarks
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="activityId"></param>
+    private async Task ScheduleActivity(int id, string activityId)
+    {
+
+        // ScheduleActivityHandler activityHandler = new ScheduleActivityHandler();
+        var workflowInstanceFilter = new WorkflowInstanceFilter()
+        {
+            CorrelationId = $"{Order.CorrelationIdPrefix}{id}"
+        };
+        var workflowInstance = await workflowInstanceStore.FindAsync(workflowInstanceFilter);
+
+        var alterations = new List<IAlteration>
+        {
+            new RemoveBookmarksAlteration(),
+            new ScheduleActivity()
+            {
+                ActivityId = activityId
+            }
+        };
+
+        await alterationRunner.RunAsync([workflowInstance!.Id], alterations);
+        await workflowRuntime.ResumeWorkflowAsync(workflowInstance.Id, new ResumeWorkflowRuntimeOptions()
+        {
+            CorrelationId =  $"{Order.CorrelationIdPrefix}{id}"
+        });
+    }
+
+    /// <summary>
+    /// Returns the workflow journal entries for the Order
+    /// </summary>
+    // public async Task<List<WorkflowExecutionLogRecord>> GetJournalEntries(int id)
+    // {
+    //     var workflowInstance = await workflowInstanceStore.FindByCorrelationIdAsync(id.ToString());
+    //     if (workflowInstance == null)
+    //     {
+    //         return [];
+    //     }
+    //
+    //     var specification = new WorkflowInstanceIdSpecification(workflowInstance.Id);
+    //     var orderBy = OrderBySpecification.OrderBy<WorkflowExecutionLogRecord>(x => x.Timestamp);
+    //     var records = (await workflowExecutionLogStore.FindManyAsync(specification, orderBy)).ToList();
+    //     return records;
+    // }
+
 }

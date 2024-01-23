@@ -40,4 +40,24 @@ public class OrderAppService(IRepository<Order, int> repository, IOrderManager o
         // item.Journal = ObjectMapper.Map<List<WorkflowExecutionLogRecord>, List<JournalEntryDto>>(entries);
         return item;
     }
+
+    /// <summary>
+    /// Resets the workflow to the start
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task ResetWorkflow(int id)
+    {
+        return orderManager.ResetWorkflow(id);
+    }
+
+    /// <summary>
+    /// Puts the workflow into a detached state to simulate an update to a workflow that removes a state
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task DetachWorkflow(int id)
+    {
+        return orderManager.DetachWorkflow(id);
+    }
 }

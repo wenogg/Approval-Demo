@@ -9,4 +9,5 @@ public enum OrderStatusType
     Shipped = 5,
     Delivered = 6,
     Cancelled = 7,
+    Detached = 8,
 }
