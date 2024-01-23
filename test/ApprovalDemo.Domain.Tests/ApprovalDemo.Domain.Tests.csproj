@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\src\ApprovalDemo.Domain\Orders\Workflow\order-workflow.json">
+    <Content Include="..\..\src\ApprovalDemo.Domain\Workflow\definitions\order-workflow.json">
       <Link>Workflow\Workflows\order-workflow.json</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
