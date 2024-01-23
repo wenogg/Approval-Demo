@@ -14,6 +14,7 @@ using ApprovalDemo.Blazor.Menus;
 using ApprovalDemo.EntityFrameworkCore;
 using ApprovalDemo.Localization;
 using ApprovalDemo.MultiTenancy;
+using ApprovalDemo.Orders;
 using ApprovalDemo.Workflow.Activities;
 using ApprovalDemo.Workflow.Alterations;
 using Elsa;
@@ -215,7 +216,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             elsa.UseRealTimeWorkflows();
 
             // Enable C# workflow expressions
-            elsa.UseCSharp();
+            elsa.UseCSharp(opt => opt.Assemblies.Add(typeof(Order).Assembly));
 
             // Enable HTTP activities.
             elsa.UseHttp();

@@ -37,7 +37,7 @@ public class WorkflowTests
     {
         // Arrange.
         const int orderId = 1;
-        var order = CreateOrder();
+        var order = CreateOrder(false);
         var services = CreateServiceProvider(order);
         await services.PopulateRegistriesAsync();
 
@@ -62,7 +62,32 @@ public class WorkflowTests
     {
         // Arrange.
         const int orderId = 1;
-        var order = CreateOrder();
+        var order = CreateOrder(false);
+        var services = CreateServiceProvider(order);
+        await services.PopulateRegistriesAsync();
+        var runtime = services.GetRequiredService<IWorkflowRuntime>();
+        var startOptions = CreateStartWorkflowOptions(orderId);
+        var workflowState = await runtime.StartWorkflowAsync("23c253cec175fb66", startOptions);
+
+        // Act
+        var result = await ApplyAction(runtime, workflowState, "Submit Order", "tester");
+
+        // Assert
+        order.Status.ShouldBe(OrderStatusType.Preparing);
+        result.Status.ShouldBe(WorkflowStatus.Running);
+        result.SubStatus.ShouldBe(WorkflowSubStatus.Suspended);
+        var bookmarks = workflowState.Bookmarks.ToList();
+        bookmarks.Count.ShouldBe(2);
+        bookmarks[0].Payload.ShouldBeOfType<UserActionBookmarkPayload>().Action.ShouldBe("Mark Prepared");
+        bookmarks[1].Payload.ShouldBeOfType<UserActionBookmarkPayload>().Action.ShouldBe("Return for correction");
+    }
+
+    [Fact(DisplayName = "Complete activity must not cascade.")]
+    public async Task GivenOrderIsHot_WhenSubmit_WhenApplyActionSubmitOrder_ThenTransitionsToPendingOrderPreparation()
+    {
+        // Arrange.
+        const int orderId = 1;
+        var order = CreateOrder(true);
         var services = CreateServiceProvider(order);
         await services.PopulateRegistriesAsync();
         var runtime = services.GetRequiredService<IWorkflowRuntime>();
@@ -119,11 +144,12 @@ public class WorkflowTests
         return startOptions;
     }
 
-    private Order CreateOrder() =>
+    private Order CreateOrder(bool isHot) =>
         new Order()
             {
                 Item = "item",
-                Description = "description"
+                Description = "description",
+                IsHot = isHot
             };
 
     private IServiceProvider CreateServiceProvider(Order order)
@@ -146,11 +172,11 @@ public class WorkflowTests
                 services.AddSingleton(orderRepository);
             })
             .WithCapturingTextWriter(_capturingTextWriter)
-            .WithWorkflowsFromDirectory("Orders", "Workflow")
+            .WithWorkflowsFromDirectory("Workflow", "Definitions")
             .ConfigureElsa(elsa =>
             {
                 elsa
-                    .UseCSharp()
+                    .UseCSharp(opt => opt.Assemblies.Add(typeof(Order).Assembly))
                     .AddActivitiesFrom<SetOrderStatusActivity>()
                     .AddActivitiesFrom<AuthorizedUserTask>();
             })
