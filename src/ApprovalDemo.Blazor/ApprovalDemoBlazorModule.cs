@@ -30,6 +30,8 @@ using Elsa.Studio.Extensions;
 using Elsa.Studio.Shell.Extensions;
 using Elsa.Studio.Workflows.Designer.Extensions;
 using Elsa.Studio.Workflows.Extensions;
+using Elsa.Workflows.Contracts;
+using Elsa.Workflows.UIHints.Dropdown;
 using FluentStorage;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
@@ -156,7 +158,6 @@ public class ApprovalDemoBlazorModule : AbpModule
             // Configure Management layer to use EF Core.
             elsa.UseWorkflowManagement(management =>
             {
-
                 management.UseEntityFrameworkCore(opt =>
                 {
                     opt.RunMigrations = true;
@@ -219,6 +220,7 @@ public class ApprovalDemoBlazorModule : AbpModule
             // Register custom workflows from the application, if any.
             elsa.AddWorkflowsFrom<Program>();
 
+            elsa.Services.AddScoped<IUIHintHandler, DropDownUIHintHandler>();
             elsa.Services.AddCore();
             elsa.Services.AddShell(options => options.DisableAuthorization = true);
             elsa.Services.AddRemoteBackend(
@@ -227,7 +229,7 @@ public class ApprovalDemoBlazorModule : AbpModule
 
             // Configure Storage for BlobStorageWorkflowProvider with a directory on disk from where to load workflow definition JSON files from the local "Workflows" folder.
             var currentAssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
-            var workflowsDirectory = Path.Combine(currentAssemblyPath, "ApprovalItems", "Workflow");
+            var workflowsDirectory = Path.Combine(currentAssemblyPath, "Workflow", "Definitions");
 
             elsa.UseFluentStorageProvider(storage => storage.BlobStorage = _ => StorageFactory.Blobs.DirectoryFiles(Path.Combine(workflowsDirectory)));
         });

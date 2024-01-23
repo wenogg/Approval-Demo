@@ -130,7 +130,8 @@ public class OrderManager(
         var list = bookmarks
             .Where(s => s.Payload is UserActionBookmarkPayload)
             .Select(s => s.Payload)
-            .Cast<UserActionBookmarkPayload>();
+            .Cast<UserActionBookmarkPayload>()
+            .Where(s => !string.IsNullOrEmpty(s.Permission));
 
         List<string> actions = [];
         foreach (var action in list)

@@ -42,7 +42,7 @@ public class SetOrderStatusActivityTests
         };
         var services = CreateServiceProvider(order);
         var id = new Literal<string>("1");
-        var activity = new SetOrderStatusActivity(id, status.ToString());
+        var activity = new SetOrderStatusActivity(id, status);
 
         // Act
         await services.RunActivityAsync(activity);

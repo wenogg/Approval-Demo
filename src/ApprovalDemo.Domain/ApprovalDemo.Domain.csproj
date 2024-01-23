@@ -30,13 +30,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Orders\Workflow\order-workflow.json">
+    <None Update="Workflow\Definitions\order-workflow.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ApprovalItems\Workflow\ping.json">
+    <None Update="Workflow\Definitions\approval-item-workflow.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ApprovalItems\Workflow\approval-item-workflow.json">
+    <None Update="Workflow\Definitions\ping.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
