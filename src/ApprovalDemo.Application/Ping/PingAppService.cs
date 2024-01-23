@@ -18,6 +18,8 @@ public interface IPingAppService
     Task<string> Get();
 
     Task<string> GetCodeActivity();
+
+    Task<string> SendReminders();
 }
 
 /// <summary>
@@ -29,10 +31,31 @@ public class PingAppService(
     IWorkflowRuntime workflowRuntime) : ApplicationService, IPingAppService
 {
     private const string WorkflowDefinitionName = "Ping";
+    private const string ReminderDefinitionName = "Reminders";
 
     public async Task<string> Get()
     {
         var workflowDefinition = await FindWorkflowDefinition(WorkflowDefinitionName);
+        await RunWorkflow(WorkflowDefinitionName);
+        return "Pong";
+    }
+
+    public async Task<string> GetCodeActivity()
+    {
+        await workflowRunner.RunAsync(new WriteLine("Hello ASP.NET world!"));
+        return "Pong";
+    }
+
+    public async Task<string> SendReminders()
+    {
+        await RunWorkflow(ReminderDefinitionName);
+        return "Pong";
+    }
+
+    private async Task RunWorkflow(string workflowName)
+    {
+
+        var workflowDefinition = await FindWorkflowDefinition(workflowName);
         if (workflowDefinition == null)
         {
             throw new UserFriendlyException($"Could not find workflow definition {WorkflowDefinitionName}");
@@ -46,13 +69,6 @@ public class PingAppService(
         await workflowRuntime.StartWorkflowAsync(workflowDefinition.DefinitionId, startOptions);
 
         await workflowRunner.RunAsync(new WriteLine("Hello ASP.NET world!"));
-        return "Pong";
-    }
-
-    public async Task<string> GetCodeActivity()
-    {
-        await workflowRunner.RunAsync(new WriteLine("Hello ASP.NET world!"));
-        return "Pong";
     }
 
     private async Task<WorkflowDefinition?> FindWorkflowDefinition(string workflowName)

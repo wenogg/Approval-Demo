@@ -39,6 +39,9 @@
     <None Update="Workflow\Definitions\ping.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Workflow\Definitions\reminders.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

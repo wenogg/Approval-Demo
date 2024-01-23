@@ -221,6 +221,8 @@ public class ApprovalDemoBlazorModule : AbpModule
             // Enable HTTP activities.
             elsa.UseHttp();
 
+            elsa.UseEmail(email => email.ConfigureOptions = options => configuration.GetSection("Smtp").Bind(options));
+
             // Use timer activities.
             elsa.UseScheduling();
 
