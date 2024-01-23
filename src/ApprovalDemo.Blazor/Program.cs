@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
 
 namespace ApprovalDemo.Blazor;
 
@@ -12,28 +12,23 @@ public class Program
 {
     public async static Task<int> Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration()
-#if DEBUG
-            .MinimumLevel.Debug()
-#else
-            .MinimumLevel.Information()
-#endif
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .WriteTo.Async(c => c.File("Logs/logs.txt"))
-            .WriteTo.Async(c => c.Console())
-            .CreateLogger();
-
         try
         {
-            Log.Information("Starting web host.");
             var builder = WebApplication.CreateBuilder(args);
             builder.Host.AddAppSettingsSecretsJson()
                 .UseAutofac()
-                .UseSerilog();
+                .UseSerilog((context, services, loggerConfiguration) => {
+                    loggerConfiguration
+                        .ReadFrom.Configuration(context.Configuration)
+                        .WriteTo.ApplicationInsights(
+                            services.GetRequiredService<TelemetryConfiguration>(),
+                            TelemetryConverter.Traces);
+                });
             await builder.AddApplicationAsync<ApprovalDemoBlazorModule>();
             var app = builder.Build();
+
+            Log.Information("Starting web host");
+
             await app.InitializeApplicationAsync();
             await app.RunAsync();
             return 0;

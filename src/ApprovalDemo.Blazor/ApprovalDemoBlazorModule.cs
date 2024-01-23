@@ -33,6 +33,7 @@ using Elsa.Studio.Workflows.Extensions;
 using Elsa.Workflows.Contracts;
 using Elsa.Workflows.UIHints.Dropdown;
 using FluentStorage;
+using Microsoft.ApplicationInsights.DependencyCollector;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
@@ -128,6 +129,7 @@ public class ApprovalDemoBlazorModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
+        ConfigureApplicationInsights(context.Services);
         ConfigureAuthentication(context);
         ConfigureUrls(configuration);
         ConfigureBundles();
@@ -148,6 +150,15 @@ public class ApprovalDemoBlazorModule : AbpModule
         });
         context.Services.AddDashboardModule();
         context.Services.AddWorkflowsModule();
+    }
+
+    private void ConfigureApplicationInsights(IServiceCollection services)
+    {
+        services.AddApplicationInsightsTelemetry();
+        services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((module, _) =>
+        {
+            module.EnableSqlCommandTextInstrumentation = true;
+        });
     }
 
     private void ConfigureElsa(ServiceConfigurationContext context, IConfiguration configuration)
