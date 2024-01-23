@@ -12,6 +12,7 @@
     <PackageReference Include="Elsa.Testing.Shared" Version="3.0.3" />
     <PackageReference Include="Elsa.Workflows.Core" Version="3.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
     <PackageReference Include="xunit.extensibility.core" Version="2.6.6" />
   </ItemGroup>
 
